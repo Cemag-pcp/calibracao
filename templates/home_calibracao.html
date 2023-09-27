@@ -187,6 +187,7 @@
          </div>
          <div class="modal fade" id="modalGanhar2" tabindex="-1" role="dialog"
             aria-labelledby="funcionarioModalLabel" aria-hidden="false">
+            <form action="{{ url_for('inicio') }}" method="post">
             <div class="modal-dialog" role="document">
                <div class="modal-content2">
                   <div class="modal-header">
@@ -207,13 +208,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for lista in lista_historico %}
-                                    <tr style="cursor: default;">
-                                        <td data-label="N° Calibração">{{lista[2]}}</td>
-                                        <td data-label="Data">{{lista[0]}}</td>
-                                        <td data-label="Download">{{lista[1]}}</td>
-                                    </tr>
-                                    {% endfor %}
+                                    <div id="historico-table">
+                                        <!-- Os valores da lista_historico serão inseridos aqui -->
+                                    </div>                                    
                                 </tbody>
                             </table>
                         </section>
@@ -221,6 +218,7 @@
                 </div>
                 </div>
             </div>
+        </form>
 </main>
 <div id="loading-overlay" style="display: none;">
     <div id="loading-spinner"></div>

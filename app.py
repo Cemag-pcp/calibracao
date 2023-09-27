@@ -5,6 +5,7 @@ from functools import wraps
 import pandas as pd
 import requests
 from datetime import date
+import json
 
 app = Flask(__name__)
 app.secret_key = "calibracao"
@@ -55,9 +56,33 @@ def logout(): # Botão de logout
 @login_required
 def inicio(): 
 
-    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER,
-                            password=DB_PASS, host=DB_HOST)
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    if request.method == 'POST':
+        
+        tagValue= request.form.get('tag')
+        
+        query = ("""SELECT data_calib, link_certificado,
+                    ROW_NUMBER() OVER (ORDER BY id) - 1 AS id_tag
+                FROM calibracao.tb_registro_tags
+                WHERE tag = '{}'""").format(tagValue)
+        
+        print(tagValue)
+
+        cur.execute(query)
+        data = cur.fetchall()
+        tabela = pd.DataFrame(data)
+        
+        lista_historico = tabela.values.tolist()
+    
+        for registro in lista_historico:
+            if registro[0] is not None:
+                registro[0] = registro[0].strftime('%d/%m/%Y')
+
+        print(lista_historico)
+            
+        return jsonify(lista_historico)
 
     s = (""" SELECT
                 *,
@@ -81,7 +106,7 @@ def inicio():
                 SELECT tag, equipamento, localizacao,data_calib
                 FROM ranked_tags
                 WHERE row_num = 1;"""
-    
+
     cur.execute(query_historico)
     data_historico = cur.fetchall()
     tabela = pd.DataFrame(data_historico)
@@ -101,7 +126,34 @@ def inicio():
 
     list_calibracao = df.values.tolist()
     
-    return render_template("home_calibracao.html", list_calibracao=list_calibracao,responsaveis=responsaveis,list_tabela=list_tabela)
+    return render_template("home_calibracao.html", list_calibracao=list_calibracao, responsaveis=responsaveis, list_tabela=list_tabela)
+
+# @app.route('/modal_historico', methods=['POST','GET'])
+# @login_required
+# def modal_historico():
+
+#     if request.method == 'POST':
+#         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+#         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+#         tagValue= request.form.get('tag')
+        
+#         query = ("""SELECT data_calib, link_certificado,
+#                     ROW_NUMBER() OVER (ORDER BY id) - 1 AS id_tag
+#                 FROM calibracao.tb_registro_tags
+#                 WHERE tag = '{}'""").format(tagValue)
+
+#         cur.execute(query)
+#         data = cur.fetchall()
+#         tabela = pd.DataFrame(data)
+        
+#         lista_historico = tabela.values.tolist()
+
+#         for registro in lista_historico:
+#             if registro[0] is not None:
+#                 registro[0] = registro[0].strftime('%d/%m/%Y')
+    
+#     return render_template('home_calibracao.html',lista_historico=lista_historico)
 
 @app.route('/cadastro_equip', methods=['GET','POST'])
 @login_required
@@ -244,6 +296,8 @@ def editar_tag():
     editar_data_calib = request.form.get('editar_data_calib')
     editar_url = request.form.get('editar_url')
 
+    print(tagValue,editar_emt,editar_ema,editar_data_calib,editar_url)
+
     cur.execute("""INSERT INTO calibracao.tb_registro_tags (tag, ema, emt, data_calib,link_certificado) 
                 VALUES (%s,%s,%s,%s,%s)""",(tagValue,editar_ema,editar_emt,editar_data_calib,editar_url))
 
@@ -252,34 +306,6 @@ def editar_tag():
     conn.close()
 
     return redirect(url_for('inicio'))
-
-@app.route('/modal_historico', methods=['POST','GET'])
-@login_required
-def modal_historico():
-
-    if request.method == 'POST':
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-        tagValue= request.form.get('tag')
-        
-        query = ("""SELECT data_calib, link_certificado,
-                    ROW_NUMBER() OVER (ORDER BY id) - 1 AS id_tag
-                FROM calibracao.tb_registro_tags
-                WHERE tag = '{}'""").format(tagValue)
-
-        cur.execute(query)
-        data = cur.fetchall()
-        tabela = pd.DataFrame(data)
-        
-        lista_historico = tabela.values.tolist()
-        for registro in lista_historico:
-            if registro[0] is not None:
-                registro[0] = registro[0].strftime('%d/%m/%Y')
-                
-        print(lista_historico)
-
-        return redirect(url_for('inicio', lista_historico=lista_historico))
 
 @app.route('/relacao')
 @login_required

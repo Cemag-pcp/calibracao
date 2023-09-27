@@ -58,22 +58,24 @@ function showModal(event) {
             // Código para a Tabela 1
             const tag = event.currentTarget.querySelector('td').textContent;
             $.ajax({
-                url: '/modal_historico',
+                url: '/',
                 method: 'POST',
-                data: {
-                  tag: tag,
-                },
-                success: function () {
+                data: { tag: tag },
+                dataType: 'json',
+                success: function (serialized_data) { // Adicione o parâmetro 'data' aqui
                     // Defina o texto do título do modal com base na 'tag'
+                    
+                    console.log(serialized_data)
+
                     $("#loading-overlay").hide();
                     $('.modal-title').text("Histórico: " + tag);
-
+            
                     // Exiba o modal
                     $('#modalGanhar2').on('show.bs.modal', function () {
                         $('body').addClass('modal-open');
                     });
                     $('#modalGanhar2').modal('show');
-
+            
                     setTimeout(function() {
                         modal.style.display = 'block';
                     }, 1000);
@@ -82,9 +84,33 @@ function showModal(event) {
                         $('#modalGanhar2').modal('hide');
                         $('body').removeClass('modal-open');
                     });
+            
+                    const historicoTable = $('<table></table>').addClass('responsive-table');
+            
+                    // Crie cabeçalhos da tabela
+                    historicoTable.append('<thead><tr><th>N° Calibração</th><th>Data</th><th>Download</th></tr></thead>');
+            
+                    // Crie o corpo da tabela
+                    const historicoTableBody = $('<tbody></tbody>');
+            
+                    // Itere pela serialized_data e crie linhas da tabela
+                    serialized_data.forEach(function (item) {
+                        const row = $('<tr style="cursor: default;">');
+                        row.append($('<td></td>').text(item[2])); // N° Calibração
+                        row.append($('<td></td>').text(item[0])); // Data
+                        row.append($('<td></td>').html(`<a href="${item[1]}"></a>`)); // Download
+                        historicoTableBody.append(row);
+                    });
+            
+                    historicoTable.append(historicoTableBody);
+            
+                    // Adicione a tabela ao elemento #historico-table no seu HTML
+                    $('#historico-table').html(historicoTable);
+            
+                    // Resto do código para exibir o modal
                 },
                 error: function (error) {
-                    alert('Essa Ordem de Serviço não contém imagem ou vídeo');
+                    alert('Erro');
                     console.log(error);
                 }
             });
