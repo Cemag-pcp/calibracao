@@ -88,7 +88,7 @@ function showModal(event) {
                     const historicoTable = $('<table></table>').addClass('responsive-table');
             
                     // Crie cabeçalhos da tabela
-                    historicoTable.append('<thead><tr><th>N° Calibração</th><th>Data</th><th>Download</th></tr></thead>');
+                    historicoTable.append('<thead><tr><th class="cabecalho">N° Calibração</th><th class="cabecalho">Data</th><th class="cabecalho">Links</th></tr></thead>');
             
                     // Crie o corpo da tabela
                     const historicoTableBody = $('<tbody></tbody>');
@@ -98,7 +98,20 @@ function showModal(event) {
                         const row = $('<tr style="cursor: default;">');
                         row.append($('<td></td>').text(item[2])); // N° Calibração
                         row.append($('<td></td>').text(item[0])); // Data
-                        row.append($('<td></td>').html(`<a href="${item[1]}"></a>`)); // Download
+
+                        const downloadLink = $('<td></td>');
+                        if (item[1]) {
+                            const link = $(`<a href="${item[1]}"><i class="fa-solid fa-download" style="color: black;"></i></a>`);
+                            downloadLink.append(link);
+                        } else {
+                            const redIcon = $('<i class="fa-solid fa-download" style="color: red;"></i>');
+                            downloadLink.append(redIcon);
+                            redIcon.on('click', function () {
+                                alert('Link vazio! Insira um link válido.');
+                            });
+                        }
+
+                        row.append(downloadLink);
                         historicoTableBody.append(row);
                     });
             

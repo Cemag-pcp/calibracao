@@ -187,7 +187,6 @@
          </div>
          <div class="modal fade" id="modalGanhar2" tabindex="-1" role="dialog"
             aria-labelledby="funcionarioModalLabel" aria-hidden="false">
-            <form action="{{ url_for('inicio') }}" method="post">
             <div class="modal-dialog" role="document">
                <div class="modal-content2">
                   <div class="modal-header">
@@ -199,26 +198,16 @@
                   <div class="modal-body">
                     <div class="table">
                         <section class="table__body">
-                            <table class="responsive-table ">
-                                <thead>
-                                    <tr>
-                                        <th class="cabecalho">N° Calibração</th>
-                                        <th class="cabecalho">Data</th>
-                                        <th class="cabecalho">Download</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <div id="historico-table">
-                                        <!-- Os valores da lista_historico serão inseridos aqui -->
-                                    </div>                                    
-                                </tbody>
-                            </table>
+                           <!-- Tabela sendo criada pelo modal_table12.js -->
+                            <div id="historico-table">
+                                <!-- Os valores da lista_historico serão inseridos aqui -->
+                            </div>                                    
+            
                         </section>
                     </div>
                 </div>
                 </div>
             </div>
-        </form>
 </main>
 <div id="loading-overlay" style="display: none;">
     <div id="loading-spinner"></div>
