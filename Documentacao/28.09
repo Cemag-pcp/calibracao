@@ -1,0 +1,6 @@
+O que foi feito?
+- Coloquei EMA e EMT na tabela do Modal de Histórico e abri os campos para edição em caso de erro de registro 
+- As alterações já estão sendo enviadas para o backend 
+Onde eu parei? 
+- Conclui o envio do back-end
+- Próximo passo é criar o modal no plano mestre para envio de tag para calibração

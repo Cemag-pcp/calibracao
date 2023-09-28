@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 from datetime import date
 import json
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "calibracao"
@@ -63,7 +64,7 @@ def inicio():
         
         tagValue= request.form.get('tag')
         
-        query = ("""SELECT data_calib, link_certificado,
+        query = ("""SELECT id, data_calib, link_certificado, ema, emt,
                     ROW_NUMBER() OVER (ORDER BY id) - 1 AS id_tag
                 FROM calibracao.tb_registro_tags
                 WHERE tag = '{}'""").format(tagValue)
@@ -73,14 +74,13 @@ def inicio():
         cur.execute(query)
         data = cur.fetchall()
         tabela = pd.DataFrame(data)
+        # conn.close()
         
         lista_historico = tabela.values.tolist()
     
         for registro in lista_historico:
-            if registro[0] is not None:
-                registro[0] = registro[0].strftime('%d/%m/%Y')
-
-        print(lista_historico)
+            if registro[1] is not None:
+                registro[1] = registro[1].strftime('%Y-%m-%d')
             
         return jsonify(lista_historico)
 
@@ -128,32 +128,43 @@ def inicio():
     
     return render_template("home_calibracao.html", list_calibracao=list_calibracao, responsaveis=responsaveis, list_tabela=list_tabela)
 
-# @app.route('/modal_historico', methods=['POST','GET'])
-# @login_required
-# def modal_historico():
+@app.route('/editar_modal_historico', methods=['POST','GET'])
+@login_required
+def modal_historico():
 
-#     if request.method == 'POST':
-#         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-#         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-#         tagValue= request.form.get('tag')
-        
-#         query = ("""SELECT data_calib, link_certificado,
-#                     ROW_NUMBER() OVER (ORDER BY id) - 1 AS id_tag
-#                 FROM calibracao.tb_registro_tags
-#                 WHERE tag = '{}'""").format(tagValue)
+    if request.method == 'POST':
 
-#         cur.execute(query)
-#         data = cur.fetchall()
-#         tabela = pd.DataFrame(data)
-        
-#         lista_historico = tabela.values.tolist()
+        dados = json.loads(request.data)
 
-#         for registro in lista_historico:
-#             if registro[0] is not None:
-#                 registro[0] = registro[0].strftime('%d/%m/%Y')
-    
-#     return render_template('home_calibracao.html',lista_historico=lista_historico)
+        id = dados['valoresNovos']['id']
+        valor_novo_ema = dados['valoresNovos']['valor_novo_ema']
+        valor_novo_emt = dados['valoresNovos']['valor_novo_emt']
+        valor_novo_link = dados['valoresNovos']['link_novo_certificado']
+
+        nova_data = dados['dataInput']
+        if nova_data == '':
+            nova_data = dados['valoresNovos']['data_antiga']
+            nova_data = datetime.datetime.strptime(nova_data, '%Y-%m-%d') 
+        else:
+            nova_data = datetime.datetime.strptime(nova_data, '%Y-%m-%d') 
+        if valor_novo_link == '':
+            valor_novo_link = dados['valoresNovos']['link_certificado']
+
+        print(id,nova_data,valor_novo_ema,valor_novo_emt,valor_novo_link)
+
+        cur.execute("""UPDATE calibracao.tb_registro_tags
+                    SET ema = %s,
+                        emt = %s,
+                        data_calib = %s,
+                        link_certificado = %s
+                    WHERE id = %s;""",(valor_novo_ema,valor_novo_emt,nova_data,valor_novo_link,id))
+        conn.commit()
+        cur.close()
+
+    return render_template('home_calibracao.html')
 
 @app.route('/cadastro_equip', methods=['GET','POST'])
 @login_required

@@ -756,6 +756,7 @@ tbody tr.hide td i{
 }
 
 .botão_modal_tag{
+    color: rgb(255, 255, 255);
     background: #8ECAEC;
     border: solid 1px #fff;
     cursor: pointer;
@@ -768,7 +769,7 @@ tbody tr.hide td i{
 }
 
 .botão_modal_tag:hover{
-    background: #82c3e9;
+    background: #73b7df;
 }
 
 .select2-container--default .select2-results>.select2-results__options {
