@@ -1,5 +1,6 @@
 O que foi feito?
 - Coloquei os Botões na tabela e vinculei o modal ao botão de recebimento
 - Criei um outro modal para envio
+- Criei a tabela SQL para guardar os materiais que foram enviados para calibração 
 Onde eu parei? 
-- Próximo passo é criar a tabela SQL para guardar os materiais que foram enviados para calibração 
+- Próximo passo é fazer a lógica dos Status com os Botões
