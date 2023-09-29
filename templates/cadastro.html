@@ -467,6 +467,8 @@ function updateTag() {
     var equipamento = document.getElementById('tag_equipamento').value;
     var localizacao = document.getElementById('tag_localizacao').value;
 
+    console.log(localizacao.toUpperCase())
+
     // Personalize a lógica de acordo com suas necessidades
     var tag = '';
     
@@ -475,7 +477,11 @@ function updateTag() {
     }
     
     if (localizacao) {
-        tag += '-' + localizacao.substring(0, 2).toUpperCase();
+        if (localizacao.toUpperCase() === 'QUALIDADE') {
+            tag += '-CQ';
+        } else {
+            tag += '-' + localizacao.substring(0, 2).toUpperCase();
+        }
     }
 
     // Atualize o valor do campo tag

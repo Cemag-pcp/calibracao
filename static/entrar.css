@@ -169,6 +169,18 @@ h2 {
     left: 50%; /* Posiciona a esquerda do modal no meio da tela horizontalmente */
     transform: translate(-50%, -50%); /* Move o modal de volta 50% da sua própria largura e altura */
 }
+.modal-content3 {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 600px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: fixed;
+    top: 50%; /* Posiciona o topo do modal no meio da tela verticalmente */
+    left: 50%; /* Posiciona a esquerda do modal no meio da tela horizontalmente */
+    transform: translate(-50%, -50%); /* Move o modal de volta 50% da sua própria largura e altura */
+}
 
 .close {
     position: absolute;
@@ -231,6 +243,18 @@ h2 {
         transform: translate(-50%, -50%); /* Move o modal de volta 50% da sua própria largura e altura */
     }
     .modal-content2 {
+        background-color: #fff;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        text-align: center;
+        position: fixed;
+        top: 50%; /* Posiciona o topo do modal no meio da tela verticalmente */
+        left: 50%; /* Posiciona a esquerda do modal no meio da tela horizontalmente */
+        transform: translate(-50%, -40%); /* Move o modal de volta 50% da sua própria largura e altura */
+    }
+    .modal-content3 {
         background-color: #fff;
         padding: 20px;
         border: 1px solid #888;

@@ -166,6 +166,27 @@ def modal_historico():
 
     return render_template('home_calibracao.html')
 
+@app.route('/modal_data_envio', methods = ['POST'])
+@login_required
+def envio():
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    tagValue = request.form.get('tagValue')
+    editar_fornecedor = request.form.get('editar_fornecedor')
+    editar_data_envio = request.form.get('editar_data_envio')
+
+    print(tagValue,editar_fornecedor,editar_data_envio)
+
+    cur.execute("""INSERT INTO calibracao.tb_envio_tags_calibracao (tag, fornecedor, data_envio) 
+                VALUES (%s,%s,%s)""",(tagValue,editar_fornecedor,editar_data_envio))
+
+    conn.commit()
+
+    conn.close()
+
+    return render_template('home_calibracao.html')
+
 @app.route('/cadastro_equip', methods=['GET','POST'])
 @login_required
 def cadastro_equip(): 
@@ -322,7 +343,19 @@ def editar_tag():
 @login_required
 def relacao(): 
     
-    return render_template("relacao.html")
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    query = (""" SELECT *
+                FROM calibracao.tb_envio_tags_calibracao;""")
+    
+    cur.execute(query)
+    data = cur.fetchall()
+    tabela = pd.DataFrame(data)
+
+    list_tags_enviadas = tabela.values.tolist()
+
+    return render_template('relacao.html',list_tags_enviadas=list_tags_enviadas)
 
 @app.route('/atualizando_equip', methods=['POST','GET'])
 @login_required

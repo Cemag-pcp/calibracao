@@ -23,30 +23,36 @@
             <table class="responsive-table ">
                 <thead>
                     <tr>
-                        <th class="cabecalho">Tag</th>
+                        <th class="cabecalho">Tag - Equip.</th>
                         <th class="cabecalho">Equip</th>
-                        <th class="cabecalho">Setor</th>
                         <th class="cabecalho">Ult.Calib</th>
-                        <th class="cabecalho">Periodicidade</th>
                         <th class="cabecalho">Status</th>
                         <th class="cabecalho">Prox.Calib</th>
+                        <th class="cabecalho">Recebimento</th>
+                        <th class="cabecalho">Envio</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in list_calibracao %}
-                    <tr class="modal-trigger" onclick="pegarValor('{{ row[0] }}')">
+                    <tr onclick="pegarValor('{{ row[0] }}')">
                         <td data-label="Tag">{{ row[0] }}</td>
                         <td data-label="Equip">{{row[1]}}</td>
                         <td data-label="Unidade" style="display: none;">{{row[2]}}</td>
-                        <td data-label="Localizacao">{{row[3]}}</td>
+                        <td data-label="Localizacao" style="display: none;">{{row[3]}}</td>
                         <td data-label="Responsavel" style="display: none;">{{row[4]}}</td>
                         <td data-label="Tipo de Controle" style="display: none;">{{row[5]}}</td>
                         <td data-label="Ult.Calib">{{row[6]}}</td>
-                        <td data-label="Periodicidade">{{row[7]}}</td>
+                        <td data-label="Periodicidade" style="display: none;">{{row[7]}}</td>
                         <td data-label="Metodo" style="display: none;">{{row[8]}}</td>
                         <td data-label="Faixa Nominal" style="display: none;">{{row[9]}}</td>
                         <td data-label="Status">{{row[10]}}</td>
                         <td data-label="Prox.Calib">{{row[13]}} - {{row[7]}} meses</td>
+                        <td data-label="Recebimento">
+                            <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}">Recebimento</button>
+                        </td>
+                        <td data-label="Envio">
+                            <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')">Envio</button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -81,8 +87,8 @@
                 </thead>
                 <tbody>
                     {% for lista in list_tabela %}
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">{{ lista[0] }}</td>
+                    <tr class="modal-trigger2">
+                        <td data-label="Tag">{{lista[0]}}</td>
                         <td data-label="Equip">{{lista[1]}}</td>
                         <td data-label="Setor">{{lista[2]}}</td>
                         <td data-label="Data Ult. Calibração">{{lista[3]}}</td>
@@ -185,6 +191,38 @@
                </div>
             </div>
          </div>
+         <div class="modal fade" id="modalGanhar3" tabindex="-1" role="dialog"
+            aria-labelledby="funcionarioModalLabel" aria-hidden="false">
+            <div class="modal-dialog" role="document">
+               <div class="modal-content3">
+                  <div class="modal-header">
+                     <h2 class="modal-title" id="funcionarioModalLabel"></h2>
+                     <button type="button" class="close" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                     </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group2">  
+                        <div class="form-modal">
+                        <div class="form-row" style="margin-top: 20px; margin-bottom: 20px;">
+                          <div class="form-group" >
+                            <label for="editar_fornecedor">Fornecedor</label>
+                            <input type="text" class="form-control" style="height: 38px;" name="editar_fornecedor" id="editar_fornecedor">
+                          </div>
+                          <div class="form-group">
+                            <label for="editar_data_envio">Data Envio</label>
+                            <input type="date" class="form-control" style="height: 38px;" name="editar_data_envio" id="editar_data_envio">
+                          </div>
+                        </div>
+                        <div>
+                            <button class="enviar_calibracao">Enviar</button>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+            </div>
+         </div>
          <div class="modal fade" id="modalGanhar2" tabindex="-1" role="dialog"
             aria-labelledby="funcionarioModalLabel" aria-hidden="false">
             <div class="modal-dialog" role="document">
@@ -279,5 +317,50 @@
             }
         });
     });
-    </script>
+</script>
+
+<script>
+    $(document).ready(function() {
+    $(".enviar_calibracao").click(function(event) {
+        $("#loading-overlay").show();
+       
+        // Obtém os valores de editar_emt, editar_ema, editar_data_calib como você já fez
+        var editar_fornecedor = $('#editar_fornecedor').val();
+        var editar_data_envio = $('#editar_data_envio').val();
+
+        if (editar_fornecedor === "" || editar_data_envio === "") {
+            // Exibe um alerta
+            alert("Por favor, preencha todos os campos.");
+
+            // Oculta a sobreposição de carregamento e não envia a solicitação
+            $("#loading-overlay").hide();
+
+            return;
+        } else {
+            // Se todos os campos estiverem preenchidos, continue com a solicitação AJAX
+            var data = {
+                tagValue:tagValue,
+                editar_fornecedor: editar_fornecedor,
+                editar_data_envio: editar_data_envio,
+            };
+        
+            // Faça a solicitação AJAX com os dados
+            $.ajax({
+                url: '/modal_data_envio',
+                method: 'POST',
+                data: data,
+                success: function(response) {
+                    // Lide com a resposta do servidor, se necessário
+                    console.log("Resposta do servidor:", response);
+                    window.location.reload();
+                },
+                error: function(error) {
+                    console.error("Erro na solicitação AJAX:", error);
+                    $("#loading-overlay").hide();
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}
