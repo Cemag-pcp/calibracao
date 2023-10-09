@@ -342,6 +342,11 @@ tbody tr.hide{
     display: none;
 }
 
+tbody .modal-trigger:hover{
+    background-color: #fff6 !important;
+    cursor: pointer;
+}
+
 tbody .modal-trigger2:hover{
     background-color: #fff6 !important;
     cursor: pointer;

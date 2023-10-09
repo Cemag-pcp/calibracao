@@ -318,7 +318,7 @@
 </script>
 <script>
    function showModalGanhar(event) {
-
+    $("#loading-overlay").show();
     const isTable1 = event.currentTarget.closest('.table-1') !== null;
     const isTable2 = event.currentTarget.closest('.table-2') !== null;
     if (isTable1) {
@@ -327,6 +327,7 @@
             $.ajax({
                 success: function () {
                     // Defina o texto do título do modal com base na 'tag'
+                    $("#loading-overlay").hide();
                     $('.modal-title').text(tag);
 
                     // Exiba o modal
@@ -345,42 +346,15 @@
                     });
                 },
                 error: function (error) {
-                    alert('Essa Ordem de Serviço não contém imagem ou vídeo');
+                    $("#loading-overlay").hide();
+                    alert('Ocorreu um erro, recarregue a página');
                     console.log(error);
                 }
             });
-        } else if (isTable2) {
-            // Código para a Tabela 1
-            const tag = event.currentTarget.querySelector('td').textContent;
-            $.ajax({
-                success: function () {
-                    // Defina o texto do título do modal com base na 'tag'
-                    $('.modal-title').text("Histórico: " + tag);
-
-                    // Exiba o modal
-                    $('#modalGanhar2').on('show.bs.modal', function () {
-                        $('body').addClass('modal-open');
-                    });
-                    $('#modalGanhar2').modal('show');
-
-                    setTimeout(function() {
-                        modal.style.display = 'block';
-                    }, 1000);
-                    // Fechar o modal ao clicar no botão de fechar
-                    $('#modalGanhar2').on('click', '.close', function () {
-                        $('#modalGanhar2').modal('hide');
-                        $('body').removeClass('modal-open');
-                    });
-                },
-                error: function (error) {
-                    alert('Essa Ordem de Serviço não contém imagem ou vídeo');
-                    console.log(error);
-                }
-            });
-        }
+        } 
     }
 // Obtém todos os elementos 'tr' na tabela
-const trElements = document.querySelectorAll('tr');
+const trElements = document.querySelectorAll('.modal-trigger');
 
 // Adiciona um ouvinte de eventos de clique a cada 'tr'
 trElements.forEach(function(tr) {

@@ -45,7 +45,13 @@
                         <td data-label="Periodicidade" style="display: none;">{{row[7]}}</td>
                         <td data-label="Metodo" style="display: none;">{{row[8]}}</td>
                         <td data-label="Faixa Nominal" style="display: none;">{{row[9]}}</td>
-                        <td data-label="Status">{{row[10]}}</td>
+                        {% if row[10] == 'Em Calibração' %}
+                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: yellow;"></i></td>
+                        {% elif row[10] == 'Calibrado' %}
+                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: rgb(117, 252, 139);"></i></td>
+                        {% else %}
+                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: rgb(255, 79, 79);"></i></td>
+                        {% endif %}
                         <td data-label="Prox.Calib">{{row[13]}} - {{row[7]}} meses</td>
                         <td data-label="Recebimento">
                             <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}">Recebimento</button>

@@ -123,7 +123,7 @@ def inicio():
     cur.execute(s)
     data = cur.fetchall()
     df = pd.DataFrame(data)
-
+    print(df)
     list_calibracao = df.values.tolist()
     
     return render_template("home_calibracao.html", list_calibracao=list_calibracao, responsaveis=responsaveis, list_tabela=list_tabela)
