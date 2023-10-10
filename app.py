@@ -69,25 +69,35 @@ def inicio():
                 FROM calibracao.tb_registro_tags
                 WHERE tag = '{}'""").format(tagValue)
         
-        print(tagValue)
-
         cur.execute(query)
         data = cur.fetchall()
         tabela = pd.DataFrame(data)
-        # conn.close()
-        
+
         lista_historico = tabela.values.tolist()
     
         for registro in lista_historico:
             if registro[1] is not None:
                 registro[1] = registro[1].strftime('%Y-%m-%d')
-            
+
+        conn.commit()
+        cur.close()
+
         return jsonify(lista_historico)
 
-    s = (""" SELECT
-                *,
-                CAST (data_calibracao+(periodicidade||'months')::interval AS date) 
-            FROM calibracao.tb_cadastro_tags """)
+    s = (""" SELECT *,
+                CASE 
+                    WHEN t3.data_envio IS NOT NULL AND t3.data_chegada IS NULL THEN 'Em Calibração'
+                    WHEN t3.periodicidade_dias * 0.8 <= t3.dias_apos_calibracao THEN 'A Calibrar'
+                    ELSE 'Calibrado'
+                END as novo_status,
+                CAST (t3.data_calibracao + (t3.periodicidade || ' months')::interval AS date) as proxima_data_calibracao
+            FROM (
+                SELECT envio.*, cadastro.data_envio, cadastro.data_chegada, envio.periodicidade * 30 as periodicidade_dias,
+                    CURRENT_DATE - DATE(envio.data_calibracao) as dias_apos_calibracao
+                FROM calibracao.tb_cadastro_tags  AS envio
+                LEFT JOIN calibracao.tb_envio_tags_calibracao AS cadastro
+                ON envio.tag = cadastro.tag AND envio.tag = cadastro.tag
+                ) AS t3; """)
     
     query = (""" SELECT *
                 FROM tb_matriculas;""")
@@ -123,7 +133,6 @@ def inicio():
     cur.execute(s)
     data = cur.fetchall()
     df = pd.DataFrame(data)
-    print(df)
     list_calibracao = df.values.tolist()
     
     return render_template("home_calibracao.html", list_calibracao=list_calibracao, responsaveis=responsaveis, list_tabela=list_tabela)
@@ -161,6 +170,7 @@ def modal_historico():
                         data_calib = %s,
                         link_certificado = %s
                     WHERE id = %s;""",(valor_novo_ema,valor_novo_emt,nova_data,valor_novo_link,id))
+        
         conn.commit()
         cur.close()
 
@@ -332,6 +342,14 @@ def editar_tag():
 
     cur.execute("""INSERT INTO calibracao.tb_registro_tags (tag, ema, emt, data_calib,link_certificado) 
                 VALUES (%s,%s,%s,%s,%s)""",(tagValue,editar_ema,editar_emt,editar_data_calib,editar_url))
+    
+    cur.execute("""UPDATE calibracao.tb_envio_tags_calibracao
+                            SET data_chegada = %s
+                            WHERE tag = %s and data_chegada ISNULL;""",(editar_data_calib,tagValue))
+    
+    cur.execute("""UPDATE calibracao.tb_cadastro_tags
+                        SET data_calibracao = %s
+                        WHERE tag = %s;""",(editar_data_calib,tagValue))
 
     conn.commit()
 
@@ -346,8 +364,12 @@ def relacao():
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    query = (""" SELECT *
-                FROM calibracao.tb_envio_tags_calibracao;""")
+    query = (""" SELECT *,
+                CASE 
+                    WHEN data_chegada IS NULL THEN CURRENT_DATE - DATE(data_envio)
+                    ELSE DATE(data_chegada) - DATE(data_envio)
+                END as contagem_dias
+            FROM calibracao.tb_envio_tags_calibracao;""")
     
     cur.execute(query)
     data = cur.fetchall()

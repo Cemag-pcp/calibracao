@@ -1,10 +1,14 @@
 function showModal2(event) {
     $("#loading-overlay").show();
     const tag = event.currentTarget.querySelector('td').textContent;
+    const data_chegada = $('#editar_data_calib').val();
     $.ajax({
         url: '/',
         method: 'POST',
-        data: { tag: tag },
+        data: { 
+                tag: tag, 
+                data_chegada: data_chegada 
+              },
         dataType: 'json',
         success: function (lista_historico) { // Adicione o parâmetro 'data' aqui
             // Defina o texto do título do modal com base na 'tag'

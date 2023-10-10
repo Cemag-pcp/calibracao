@@ -323,6 +323,19 @@ input[readonly] {
     color: #888; /* Cor do texto cinza */
 }
 
+button[readonly] {
+    background-color: #e9e9e9; /* Cor de fundo cinza */
+    color: #888; /* Cor do texto cinza */
+    box-shadow: none;
+    cursor: default;
+}
+
+button[readonly]:hover {
+    background-color: #e9e9e9; /* Cor de fundo cinza */
+    color: #888; /* Cor do texto cinza */
+    cursor: default;
+}
+
 .mult-select-tag .input-container {
     display: flex;
     flex-wrap: wrap;

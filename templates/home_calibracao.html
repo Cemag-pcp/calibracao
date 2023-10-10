@@ -45,20 +45,35 @@
                         <td data-label="Periodicidade" style="display: none;">{{row[7]}}</td>
                         <td data-label="Metodo" style="display: none;">{{row[8]}}</td>
                         <td data-label="Faixa Nominal" style="display: none;">{{row[9]}}</td>
-                        {% if row[10] == 'Em Calibração' %}
-                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: yellow;"></i></td>
-                        {% elif row[10] == 'Calibrado' %}
-                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: rgb(117, 252, 139);"></i></td>
+                        {% if row[15] == 'Em Calibração' %}
+                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: yellow;"></i></td>
+                        {% elif row[15] == 'Calibrado' %}
+                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: rgb(117, 252, 139);"></i></td>
                         {% else %}
-                            <td data-label="Status">{{row[10]}} <i class="fa-solid fa-circle" style="color: rgb(255, 79, 79);"></i></td>
+                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: rgb(255, 79, 79);"></i></td>
                         {% endif %}
-                        <td data-label="Prox.Calib">{{row[13]}} - {{row[7]}} meses</td>
+                        {% if row[13] - row[14] > 0 and row[15] != 'Em Calibração' %}
+                        <td data-label="Prox.Calib">{{row[16]}} Faltam {{row[13] - row[14]}} dias</td>
+                        {% elif row[15] == 'Em Calibração' %}
+                        <td data-label="Prox.Calib">{{row[16]}} Item Enviado</td>
+                        {% else %}
+                        <td data-label="Prox.Calib">{{row[16]}} Está atrasado: {{(-row[13]) + row[14]}} dias</td>
+                        {% endif %}
+                        {% if row[15] == 'Em Calibração' %}
                         <td data-label="Recebimento">
                             <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}">Recebimento</button>
                         </td>
                         <td data-label="Envio">
+                            <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')" readonly="readonly" disabled>Envio</button>
+                        </td>
+                        {% else %}
+                        <td data-label="Recebimento">
+                            <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}" readonly="readonly" disabled>Recebimento</button>
+                        </td>
+                        <td data-label="Envio">
                             <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')">Envio</button>
                         </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

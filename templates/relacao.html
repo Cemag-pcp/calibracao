@@ -161,7 +161,7 @@
     </div>
     <div class="table table-2" style="margin: 40px; margin-left: 20px;">
         <section class="table__header">
-            <h1>Cronograma de Equipamentos</h1>
+            <h1>Equipamentos Enviados</h1>
             <div class="input-group2">
                 <input type="search" placeholder="Filtrar...">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -184,8 +184,16 @@
                         <td data-label="Tag">{{lista[0]}}</td>
                         <td data-label="Equip">{{lista[1]}}</td>
                         <td data-label="Data Envio">{{lista[2]}}</td>
-                        <td data-label="Data - Chegada">-</td>
-                        <td data-label="Duração">-</td>
+                        {% if lista[3] == None %}
+                        <td data-label="Data - Chegada">Item ainda não chegou</td>
+                        {% else %}
+                        <td data-label="Data - Chegada">{{lista[3]}}</td>
+                        {% endif %}
+                        {% if lista[3] == None %}
+                        <td data-label="Duração">Foi Enviado a: {{lista[4]}} dias</td>
+                        {% else %}
+                        <td data-label="Duração">Durou: {{lista[4]}} dias</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
