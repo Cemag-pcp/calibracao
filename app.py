@@ -116,11 +116,24 @@ def inicio():
                 SELECT tag, equipamento, localizacao,data_calib
                 FROM ranked_tags
                 WHERE row_num = 1;"""
+    
+    query_equip_unidade = ("""SELECT DISTINCT equipamento,faixa_nominal, unidade 
+                            FROM calibracao.tb_get_equipamentos
+                            ORDER BY equipamento;""")
+    
+    cur.execute(query_equip_unidade)
+    equip_unidade = cur.fetchall()
+    df_data = pd.DataFrame(equip_unidade)
+    equipamentos = df_data[0].values.tolist()
+    equipamentos = list(set(filter(None, equipamentos)))
+    unidades = df_data[1].values.tolist()
+    unidades = list(set(filter(None, unidades)))
+    faixas_nominais = df_data[2].values.tolist()
+    faixas_nominais = list(set(filter(None, faixas_nominais)))
 
     cur.execute(query_historico)
     data_historico = cur.fetchall()
     tabela = pd.DataFrame(data_historico)
-
     list_tabela = tabela.values.tolist()
 
     cur.execute(query)
@@ -133,9 +146,13 @@ def inicio():
     cur.execute(s)
     data = cur.fetchall()
     df = pd.DataFrame(data)
+    custom_order = ["A Calibrar", "Em Calibração", "Calibrado"]
+    df = df.sort_values(by=16, key=lambda x: x.map({value: i for i, value in enumerate(custom_order)}))
     list_calibracao = df.values.tolist()
+    print(df)
     
-    return render_template("home_calibracao.html", list_calibracao=list_calibracao, responsaveis=responsaveis, list_tabela=list_tabela)
+    return render_template("home_calibracao.html", list_calibracao=list_calibracao, equipamentos=equipamentos,responsaveis=responsaveis,unidades=unidades, 
+                                                    faixas_nominais=faixas_nominais, list_tabela=list_tabela)
 
 @app.route('/editar_modal_historico', methods=['POST','GET'])
 @login_required
@@ -388,7 +405,7 @@ def atualizacao():
 
     equip = request.form['tag_equipamento']
 
-    query = (f"""   SELECT DISTINCT (unidade,faixa_nominal)
+    query = (f"""SELECT DISTINCT (unidade,faixa_nominal)
                     FROM calibracao.tb_get_equipamentos
                     WHERE equipamento = '{equip}';""")
 

@@ -114,12 +114,12 @@ table{
     width: 100%;
 }
 
-.table__header{
+.table__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 10%;
+    height: 70px;
     background: #fff4;
     padding: .8rem 1rem;
 }
@@ -280,9 +280,9 @@ table{
     outline: none;
 }
 
-.table__body{
+.table__body {
     width: 95%;
-    max-height: calc(75% - .8rem);
+    max-height: calc(85% - .8rem);
     background-color: rgba(235, 235, 235, 0.733);
     margin: .8rem auto;
     border-radius: .6rem;
@@ -386,6 +386,7 @@ tbody tr.hide td i{
         display: flex;
         margin-top: 90px;
         flex-direction: column;
+        font-size: 10px;
     }
 
     #calibracao {
@@ -445,7 +446,7 @@ tbody tr.hide td i{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 30%;
+        width: 100%;
         height: 60%;
         background-color: #fff5;
         padding: 0.8rem;
@@ -454,7 +455,6 @@ tbody tr.hide td i{
     }
 
     .table__header .input-group:hover{ 
-        width: 40%;
         background-color: #fff8;
         box-shadow: 0 .1rem .4rem #0002;
     }
@@ -469,69 +469,6 @@ tbody tr.hide td i{
         padding: 0.8rem;
         border-radius: 2rem;
         transition: .2s;
-    }
-
-    .table__header .input-group2:hover{ 
-        width: 40%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group3 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30%;
-        height: 60%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group3:hover{ 
-        width: 40%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group4 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30%;
-        height: 60%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group4:hover{ 
-        width: 40%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group5 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30%;
-        height: 60%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group5:hover{ 
-        width: 40%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-    .principal {
-        font-size: 10px;
     }
 }
 .select-group{
@@ -563,7 +500,7 @@ tbody tr.hide td i{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 66%;
+        width: 100%;
         height: 70%;
         background-color: #fff5;
         padding: 0.8rem;
@@ -572,82 +509,10 @@ tbody tr.hide td i{
     }
 
     .table__header .input-group:hover{ 
-        width: 70%;
         background-color: #fff8;
         box-shadow: 0 .1rem .4rem #0002;
     }
 
-    .table__header .input-group2 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 66%;
-        height: 70%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group2:hover{ 
-        width: 70%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group3 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 66%;
-        height: 70%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group3:hover{ 
-        width: 70%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group4 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 66%;
-        height: 70%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group4:hover{ 
-        width: 70%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
-
-    .table__header .input-group5 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 66%;
-        height: 70%;
-        background-color: #fff5;
-        padding: 0.8rem;
-        border-radius: 2rem;
-        transition: .2s;
-    }
-
-    .table__header .input-group5:hover{ 
-        width: 70%;
-        background-color: #fff8;
-        box-shadow: 0 .1rem .4rem #0002;
-    }
     .select-group {
         margin-top: 10px;
         position: relative;
@@ -696,7 +561,13 @@ tbody tr.hide td i{
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
-}    
+    
+    h1{
+        font-size: 12px;
+    }
+
+}
+
 
 /* Estilos para o indicador de carregamento */
 #loading-overlay {
@@ -901,4 +772,52 @@ tbody tr.hide td i{
     opacity: 0;
     position: absolute;
   }
+}
+
+/* Adicione esta classe CSS para o layout da grade */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    margin-top: 82px;
+    overflow-x: hidden;
+    font-size: 12px;
+    transition: all 0.3s ease; /* Adiciona uma transição suave para todas as propriedades */
+}
+
+.grid-layout .table {
+    width:  90vw;
+    height: 80vh;
+    margin-bottom: 0px;
+    margin-right: 0;
+    background-color: #fff5;
+    box-shadow: 0 0.4rem 0.8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+    transition: all 0.3s ease; /* Adiciona uma transição suave para todas as propriedades */
+}
+
+
+
+@media(max-width:1000px){
+    
+    .grid-layout {
+        display: flex;
+        margin-top: 90px;
+        flex-direction: column;
+        font-size: 10px;
+    }
+
+    .grid-layout .table{
+        width: 90vw;
+        height: 60vh;
+        margin-bottom: 10px;
+        background-color: #fff5;
+        box-shadow: 0 0.4rem 0.8rem #0005;
+        border-radius: .8rem;
+        overflow: hidden;
+    }
+    #toggleButton{
+        display: none;
+    }
 }

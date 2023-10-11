@@ -2,7 +2,7 @@
 {% block body %}
 
 <main class="principal">
-    {% with messages = get_flashed_messages()  %}
+    {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
     <div class="alert-success alert-dismissible fade show" id="alerta_Os" role="alert">
@@ -14,9 +14,13 @@
     <div class="table table-1" style="margin: 40px; margin-left: 20px;">
         <section class="table__header">
             <h1>Calibração Plano-Mestre</h1>
-            <div class="input-group">
-                <input type="search" placeholder="Filtrar...">
-                <i class="fa-solid fa-magnifying-glass"></i>
+            <div style="display: flex; align-items: center;">
+                <div class="input-group">
+                    <input type="search" placeholder="Filtrar...">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <button id="downloadCSVButton1" class="botão_modal_tag"><i class="fa-solid fa-download"></i></button>
+                <button id="toggleButton" class="botão_modal_tag"><i class="fa-solid fa-plus icon-plus-minus"></i></button>
             </div>
         </section>
         <section class="table__body">
@@ -25,55 +29,72 @@
                     <tr>
                         <th class="cabecalho">Tag - Equip.</th>
                         <th class="cabecalho">Equip</th>
+                        <th class="cabecalho">Responsavel</th>
                         <th class="cabecalho">Ult.Calib</th>
                         <th class="cabecalho">Status</th>
                         <th class="cabecalho">Prox.Calib</th>
                         <th class="cabecalho">Recebimento</th>
                         <th class="cabecalho">Envio</th>
+                        <th class="cabecalho">Config.</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in list_calibracao %}
                     <tr onclick="pegarValor('{{ row[0] }}')">
+                        {% if row[11] != "Uso" %}
+                        <td data-label="Tag">{{ row[0] }} <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 15px;"></i></td>
+                        {% else %}
                         <td data-label="Tag">{{ row[0] }}</td>
+                        {% endif %}
                         <td data-label="Equip">{{row[1]}}</td>
                         <td data-label="Unidade" style="display: none;">{{row[2]}}</td>
                         <td data-label="Localizacao" style="display: none;">{{row[3]}}</td>
-                        <td data-label="Responsavel" style="display: none;">{{row[4]}}</td>
+                        <td data-label="Responsavel">{{row[4]}}</td>
                         <td data-label="Tipo de Controle" style="display: none;">{{row[5]}}</td>
                         <td data-label="Ult.Calib">{{row[6]}}</td>
                         <td data-label="Periodicidade" style="display: none;">{{row[7]}}</td>
                         <td data-label="Metodo" style="display: none;">{{row[8]}}</td>
                         <td data-label="Faixa Nominal" style="display: none;">{{row[9]}}</td>
-                        {% if row[15] == 'Em Calibração' %}
-                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: yellow;"></i></td>
-                        {% elif row[15] == 'Calibrado' %}
-                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: rgb(117, 252, 139);"></i></td>
+                        {% if row[16] == 'Em Calibração' %}
+                        <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle" style="color: yellow;"></i>
+                        </td>
+                        {% elif row[16] == 'Calibrado' %}
+                        <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle"
+                                style="color: rgb(117, 252, 139);"></i></td>
                         {% else %}
-                            <td data-label="Status">{{row[15]}} <i class="fa-solid fa-circle" style="color: rgb(255, 79, 79);"></i></td>
+                        <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle"
+                                style="color: rgb(255, 79, 79);"></i></td>
                         {% endif %}
-                        {% if row[13] - row[14] > 0 and row[15] != 'Em Calibração' %}
-                        <td data-label="Prox.Calib">{{row[16]}} Faltam {{row[13] - row[14]}} dias</td>
-                        {% elif row[15] == 'Em Calibração' %}
-                        <td data-label="Prox.Calib">{{row[16]}} Item Enviado</td>
+                        {% if row[14] - row[15] > 0 and row[16] != 'Em Calibração' %}
+                        <td data-label="Prox.Calib">{{row[17]}} Faltam {{row[14] - row[15]}} dias</td>
+                        {% elif row[16] == 'Em Calibração' %}
+                        <td data-label="Prox.Calib">{{row[17]}} Item Enviado</td>
                         {% else %}
-                        <td data-label="Prox.Calib">{{row[16]}} Está atrasado: {{(-row[13]) + row[14]}} dias</td>
+                        <td data-label="Prox.Calib">{{row[17]}} Está atrasado: {{(-row[14]) + row[15]}} dias</td>
                         {% endif %}
-                        {% if row[15] == 'Em Calibração' %}
+                        {% if row[16] == 'Em Calibração' %}
                         <td data-label="Recebimento">
-                            <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}">Recebimento</button>
+                            <button class="btn-trigger-modal botão_modal_tag"
+                                data-tag="{{ row[0] }}">Recebimento</button>
                         </td>
                         <td data-label="Envio">
-                            <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')" readonly="readonly" disabled>Envio</button>
+                            <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')"
+                                readonly="readonly" disabled><i class="fa-solid fa-paper-plane"></i></button>
                         </td>
                         {% else %}
                         <td data-label="Recebimento">
-                            <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}" readonly="readonly" disabled>Recebimento</button>
+                            <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}"
+                                readonly="readonly" disabled>Recebimento</button>
                         </td>
                         <td data-label="Envio">
-                            <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')">Envio</button>
+                            <button class="btn-trigger-envio botão_modal_tag"
+                                onclick="showModalEnvio('{{ row[0] }}')"><i class="fa-solid fa-paper-plane"></i></button>
                         </td>
                         {% endif %}
+                        <td data-label="Configurações">
+                            <button class="btn-trigger-config botão_modal_tag" 
+                                onclick="showModalConfig('{{ row[0] }}'); atualizarConfig()"><i class="fa-solid fa-gear"></i></button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -119,179 +140,420 @@
             </table>
         </section>
     </div>
-        <div class="modal fade" id="modalGanhar" tabindex="-1" role="dialog"
-            aria-labelledby="funcionarioModalLabel" aria-hidden="false">
-            <div class="modal-dialog" role="document">
-               <div class="modal-content">
-                  <div class="modal-header">
-                     <h2 class="modal-title" id="funcionarioModalLabel"></h2>
-                     <button type="button" class="close" aria-label="Fechar">
+    <div class="modal fade" id="modalGanhar" tabindex="-1" role="dialog" aria-labelledby="funcionarioModalLabel"
+        aria-hidden="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="funcionarioModalLabel"></h2>
+                    <button type="button" class="close" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
-                     </button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="form-group2">  
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group2">
                         <div class="form-modal">
-                        <div class="form-row">
-                          <div class="form-group" >
-                            <label for="editar_nome">Equipamento</label>
-                            <input type="text" class="form-control" style="height: 38px;" name="editar_nome" id="editar_nome" readonly="readonly">
-                          </div>
-                  
-                          <div class="form-group">
-                            <label for="editar_matricula">Faixa Norminal</label>
-                            <input type="text" class="form-control" style="height: 38px;" name="editar_matricula" id="editar_matricula" readonly="readonly">
-                          </div>
-                        </div>
-                        <div class="form-row">
-                          <div class="form-group">
-                            <label>Unidade</label>
-                            <input type="text" class="form-control" style="height: 38px;" name="editar_unidade" id="editar_unidade" readonly="readonly">
-                          </div>
-                        <div class="form-group">
-                          <label>Localização</label>
-                          <input type="text" class="form-control" style="height: 38px;" name="editar_localizacao" id="editar_localizacao" readonly="readonly">
-                        </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group" >
-                              <label>Responsável</label>
-                              <input type="text" class="form-control" style="height: 38px;" name="editar_responsavel" id="editar_responsavel" readonly="readonly">
-                            </div>
-                            <div class="form-group">
-                              <label>Tipo de Controle</label>
-                              <input type="text" class="form-control" style="height: 38px;" name="editar_controle" id="editar_controle" readonly="readonly">
-                            </div>
-                          </div>
-                          <div class="form-row">
-                            <div class="form-group">
-                              <label>Periodicidade</label>
-                              <input type="number" class="form-control" style="height: 38px;" name="editar_periodicidade" id="editar_periodicidade" readonly="readonly">
-                            </div>
-                            <div class="form-group">
-                              <label>Método</label>
-                              <input type="text" class="form-control" style="height: 38px;" name="editar_metodo" id="editar_metodo" readonly="readonly">
-                            </div>
-                          </div>
-                          <div class="form-row">
-                            <div class="form-group">
-                              <label>Última Calibração</label>
-                              <input type="date" class="form-control" style="height: 38px;" name="editar_ult_calibracao" id="editar_ult_calibracao" readonly="readonly">
-                            </div>
-                            <div class="form-group">
-                              <label>Status</label>
-                              <input type="text" class="form-control" style="height: 38px;" name="editar_status" id="editar_status" readonly="readonly">
-                            </div>
-                          </div>
-                          <div class="form-row">
-                            <div class="form-group">
-                              <label for="editar_emt">EMT</label>
-                              <input type="number" class="form-control" style="height: 38px;" name="editar_emt" id="editar_emt">
-                            </div>
-                            <div class="form-group">
-                              <label for="editar_ema">EMA</label>
-                              <input type="number" class="form-control" style="height: 38px;" name="editar_ema" id="editar_ema">
-                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editar_nome">Equipamento</label>
+                                    <input type="text" class="form-control" style="height: 38px;" name="editar_nome"
+                                        id="editar_nome" readonly="readonly">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="editar_matricula">Faixa Norminal</label>
+                                    <input type="text" class="form-control" style="height: 38px;"
+                                        name="editar_matricula" id="editar_matricula" readonly="readonly">
+                                </div>
                             </div>
                             <div class="form-row">
-                            <div class="form-group">
-                                <label>Data de Calibração</label>
-                                <input type="date" class="form-control" style="height: 38px;" name="editar_data_calib" id="editar_data_calib">
+                                <div class="form-group">
+                                    <label>Unidade</label>
+                                    <input type="text" class="form-control" style="height: 38px;" name="editar_unidade"
+                                        id="editar_unidade" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Localização</label>
+                                    <input type="text" class="form-control" style="height: 38px;"
+                                        name="editar_localizacao" id="editar_localizacao" readonly="readonly">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="editar_url">URL</label>
-                                <input type="url" class="form-control" style="height: 38px;" name="editar_url" id="editar_url">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Responsável</label>
+                                    <input type="text" class="form-control" style="height: 38px;"
+                                        name="editar_responsavel" id="editar_responsavel" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tipo de Controle</label>
+                                    <input type="text" class="form-control" style="height: 38px;" name="editar_controle"
+                                        id="editar_controle" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Periodicidade</label>
+                                    <input type="number" class="form-control" style="height: 38px;"
+                                        name="editar_periodicidade" id="editar_periodicidade" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Método</label>
+                                    <input type="text" class="form-control" style="height: 38px;" name="editar_metodo"
+                                        id="editar_metodo" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Última Calibração</label>
+                                    <input type="date" class="form-control" style="height: 38px;"
+                                        name="editar_ult_calibracao" id="editar_ult_calibracao" readonly="readonly">
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <input type="text" class="form-control" style="height: 38px;" name="editar_status"
+                                        id="editar_status" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editar_emt">EMT</label>
+                                    <input type="number" class="form-control" style="height: 38px;" name="editar_emt"
+                                        id="editar_emt">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editar_ema">EMA</label>
+                                    <input type="number" class="form-control" style="height: 38px;" name="editar_ema"
+                                        id="editar_ema">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Data de Calibração</label>
+                                    <input type="date" class="form-control" style="height: 38px;"
+                                        name="editar_data_calib" id="editar_data_calib">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editar_url">URL</label>
+                                    <input type="url" class="form-control" style="height: 38px;" name="editar_url"
+                                        id="editar_url">
+                                </div>
+                            </div>
+                            <div>
+                                <button id="ganhar">Confirmar</button>
                             </div>
                         </div>
-                        <div>
-                            <button id="ganhar">Confirmar</button>
-                         </div>
-                      </div>
                     </div>
-                  </div>
-               </div>
+                </div>
             </div>
-         </div>
-         <div class="modal fade" id="modalGanhar3" tabindex="-1" role="dialog"
-            aria-labelledby="funcionarioModalLabel" aria-hidden="false">
-            <div class="modal-dialog" role="document">
-               <div class="modal-content3">
-                  <div class="modal-header">
-                     <h2 class="modal-title" id="funcionarioModalLabel"></h2>
-                     <button type="button" class="close" aria-label="Fechar">
+        </div>
+    </div>
+    <div class="modal fade" id="modalGanhar3" tabindex="-1" role="dialog" aria-labelledby="funcionarioModalLabel"
+        aria-hidden="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content3">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="funcionarioModalLabel"></h2>
+                    <button type="button" class="close" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
-                     </button>
-                  </div>
-                  <div class="modal-body">
-                    <div class="form-group2">  
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group2">
                         <div class="form-modal">
-                        <div class="form-row" style="margin-top: 20px; margin-bottom: 20px;">
-                          <div class="form-group" >
-                            <label for="editar_fornecedor">Fornecedor</label>
-                            <input type="text" class="form-control" style="height: 38px;" name="editar_fornecedor" id="editar_fornecedor">
-                          </div>
-                          <div class="form-group">
-                            <label for="editar_data_envio">Data Envio</label>
-                            <input type="date" class="form-control" style="height: 38px;" name="editar_data_envio" id="editar_data_envio">
-                          </div>
+                            <div class="form-row" style="margin-top: 20px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label for="editar_fornecedor">Laboratório</label>
+                                    <input type="text" class="form-control" style="height: 38px;"
+                                        name="editar_fornecedor" id="editar_fornecedor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editar_data_envio">Data Envio</label>
+                                    <input type="date" class="form-control" style="height: 38px;"
+                                        name="editar_data_envio" id="editar_data_envio">
+                                </div>
+                            </div>
+                            <div>
+                                <button class="enviar_calibracao">Enviar</button>
+                            </div>
                         </div>
-                        <div>
-                            <button class="enviar_calibracao">Enviar</button>
-                         </div>
-                      </div>
                     </div>
-                  </div>
-               </div>
+                </div>
             </div>
-         </div>
-         <div class="modal fade" id="modalGanhar2" tabindex="-1" role="dialog"
-            aria-labelledby="funcionarioModalLabel" aria-hidden="false">
-            <div class="modal-dialog" role="document">
-               <div class="modal-content2">
-                  <div class="modal-header">
-                     <h2 class="modal-title" id="funcionarioModalLabel" style="margin: 10px;"></h2>
-                     <button type="button" class="close" aria-label="Fechar">
+        </div>
+    </div>
+    <!-- MODAL DAS CONFIGURAÇÕES -->
+    <div class="modal fade" id="config" tabindex="-1" role="dialog" aria-labelledby="funcionarioModalLabel" aria-hidden="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title"></h2>
+                    <button type="button" class="close" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                <div class="form-group2">  
+                    <div class="form-modal">
+                    <div class="form-row">
+                        <div class="form-group" >
+                        <label for="editar_equipamento">Equipamento</label>
+                        <select class="form-control" style="height: 38px;" name="editar_equipamento_config" id="editar_equipamento_config" onchange="atualizarConfig();" readonly="readonly" disabled>
+                            <option value="" selected disabled hidden></option>  
+                            {% for equipamento in equipamentos %}
+                            <option value="{{equipamento}}">{{equipamento}}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                
+                        <div class="form-group">
+                        <label for="editar_nominal">Faixa Nominal</label>
+                        <select class="form-control" style="height: 38px;" name="editar_nominal_config" id="editar_nominal_config">
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                        <label for="editar_unidade">Unidade</label>
+                        <select class="form-control" style="height: 38px;" name="editar_unidade_config" id="editar_unidade_config">
+                        </select>
+                        </div>
+                    
+                    <div class="form-group">
+                        <label for="editar_localizacao">Localização</label>
+                        <input type="text" class="form-control" style="height: 38px;" name="editar_localizacao_config" id="editar_localizacao_config" readonly="readonly">
+                    </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" >
+                            <label for="editar_responsavel">Responsável</label>
+                            <select class="form-control" style="height: 38px;" name="editar_responsavel_config" id="editar_responsavel_config">
+                                <option value="" selected disabled hidden></option>  
+                                {% for responsavel in responsaveis %}
+                                <option value="{{responsavel}}">{{responsavel}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editar_controle">Tipo de Controle</label>
+                            <input type="text" class="form-control" style="height: 38px;" name="editar_controle_config" id="editar_controle_config">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" >
+                            <label for="editar_periodicidade">Periodicidade</label>
+                            <input type="number" class="form-control" style="height: 38px;" name="editar_periodicidade_config" id="editar_periodicidade_config">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editar_metodo">Método</label>
+                            <input type="text" class="form-control" style="height: 38px;" name="editar_metodo_config" id="editar_metodo_config">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" >
+                            <label for="editar_ult_calibracao">Última Calibração</label>
+                            <input type="date" class="form-control" style="height: 38px;" name="editar_ult_calibracao_config" id="editar_ult_calibracao_config" readonly="readonly">
+                        </div>
+                
+                        <div class="form-group">
+                            <label for="editar_status">Status</label>
+                            <input type="text" class="form-control" style="height: 38px;" name="editar_status_config" id="editar_status_config" readonly="readonly">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalGanhar2" tabindex="-1" role="dialog" aria-labelledby="funcionarioModalLabel"
+        aria-hidden="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content2">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="funcionarioModalLabel" style="margin: 10px;"></h2>
+                    <button type="button" class="close" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
-                     </button>
-                  </div>
-                  <div class="modal-body">
+                    </button>
+                </div>
+                <div class="modal-body">
                     <div class="table">
                         <section class="table__body">
-                           <!-- Tabela sendo criada pelo modal_table12.js -->
+                            <!-- Tabela sendo criada pelo modal_table12.js -->
                             <div id="historico-table">
                                 <!-- Os valores da lista_historico serão inseridos aqui -->
-                            </div>                                    
-            
+                            </div>
+
                         </section>
                     </div>
                 </div>
-                </div>
             </div>
+        </div>
 </main>
 <div id="loading-overlay" style="display: none;">
     <div id="loading-spinner"></div>
- </div>
+</div>
 <script>
     new MultiSelectTag('ordemproducao', {
         rounded: true,    // default true
         shadow: true,      // default false
         placeholder: 'Pesquisar...',  // default Search...
-        onChange: function(values) {
+        onChange: function (values) {
             console.log(values)
         }
-})
+    })
+</script>
+
+<script>
+    function atualizarConfig() {
+    $("#loading-overlay").show();
+    var tag_equipamento = $('#editar_equipamento_config').val();
+    console.log(tag_equipamento)
+
+    $('#editar_unidade_config').empty();
+    $('#editar_nominal_config').empty();
+
+    // Adicionar a opção "Todos" com valor vazio
+    $('#editar_unidade_config').append($('<option selected disabled hidden>', {
+        value: '',
+        text: 'Selecionar'
+    }));
+    $('#editar_nominal_config').append($('<option selected disabled hidden>', {
+        value: '',
+        text: 'Selecionar'
+    }));
+
+    $.ajax({
+        url: '/atualizando_equip',
+        method: 'POST',
+        data: {
+            tag_equipamento: tag_equipamento
+        },
+        success: function (response) {
+            var unidades = response.unidades;
+            var faixa_nominal = response.faixa_nominal;
+
+            // Atualize o campo de seleção de Unidade
+            var selectUnidade = $('#editar_unidade_config');
+            $.each(unidades, function (index, unidade) {
+                selectUnidade.append($('<option>', {
+                    value: unidade,
+                    text: unidade
+                }));
+            });
+
+            // Atualize o campo de seleção de Faixa Nominal
+            var selectFaixaNominal = $('#editar_nominal_config');
+            $.each(faixa_nominal, function (index, fn) {
+                selectFaixaNominal.append($('<option>', {
+                    value: fn,
+                    text: fn
+                }));
+            });
+
+            $("#loading-overlay").hide(); // Oculta o overlay após atualizar os dados
+        },
+        error: function (error) {
+            console.log(error);
+            $("#loading-overlay").hide(); // Oculta o overlay após atualizar os dados
+        }
+    });
+}
+</script>
+
+<script>
+    // Seleciona o botão pelo seu ID
+    var toggleButton = document.getElementById("toggleButton");
+
+    // Seleciona os elementos que você deseja alterar pelo seu seletor de classe
+    var principalElement = document.querySelector(".principal");
+    var tableElement = document.querySelector(".table");
+
+    // Adiciona um ouvinte de evento de clique ao botão
+    toggleButton.addEventListener("click", function () {
+        // Alterna a classe 'grid-layout' nos elementos
+        principalElement.classList.toggle("grid-layout");
+        tableElement.classList.toggle("grid-layout");
+    });
+    // Seleciona o botão pelo seu ID
+    var toggleButton = document.getElementById("toggleButton");
+    // Seleciona o elemento do ícone pelo seu seletor de classe
+    var iconElement = toggleButton.querySelector(".icon-plus-minus");
+
+    // Adiciona um ouvinte de evento de clique ao botão
+    toggleButton.addEventListener("click", function () {
+        // Alterna entre as classes 'fa-plus' e 'fa-minus' no ícone
+        if (iconElement.classList.contains("fa-plus")) {
+            iconElement.classList.remove("fa-plus");
+            iconElement.classList.add("fa-minus");
+        } else {
+            iconElement.classList.remove("fa-minus");
+            iconElement.classList.add("fa-plus");
+        }
+    });
+
+
+</script>
+
+<script>
+
+function cleanCSVValue(value) {
+    // Limpa o valor removendo quebras de linha e espaços extras, além de normalizar a string para remover acentos
+    return value.replace(/[\r\n]+/g, '').trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+document.getElementById("downloadCSVButton1").addEventListener("click", function() {
+    var csvContent = [];
+    // Adiciona cabeçalhos às colunas
+    var headers = ["Tag","Equipamento","Unidade","Localizacao","Responsavel","Tipo de Controle","Ult. Calibracao","Periodicidade","Metodo","Faixa Nominal","Status","Prox.Calib"];
+    csvContent.push(headers.join(","));
+
+    var rows = document.querySelectorAll(".table-1 .table__body tbody tr");
+
+    // Obtém os dados da tabela e os formata como linhas CSV
+    rows.forEach(function(row) {
+        var rowData = [];
+        // Ignora as colunas "Recebimento" e "Envio"
+        var cells = row.querySelectorAll("td:not([data-label='Recebimento']):not([data-label='Envio'])");
+        cells.forEach(function(cell) {
+            // Limpa e normaliza o valor antes de adicionar ao rowData
+            var text = cleanCSVValue(cell.textContent);
+            rowData.push(text);
+        });
+        // Adiciona uma vírgula entre as colunas
+        csvContent.push(rowData.join(","));
+    });
+
+    // Cria um Blob com os dados CSV usando a codificação UTF-8
+    var csvBlob = new Blob([csvContent.join("\n")], { type: "text/csv;charset=utf-8;" });
+
+    // Cria um objeto URL para o Blob e cria um link de download
+    var csvURL = URL.createObjectURL(csvBlob);
+    var downloadLink = document.createElement("a");
+    downloadLink.href = csvURL;
+    downloadLink.download = "tabela1.csv";
+
+    // Simula o clique no link de download para iniciar o download do CSV
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+
+    // Limpa o objeto URL e remove o link de download da DOM
+    URL.revokeObjectURL(csvURL);
+    document.body.removeChild(downloadLink);
+});
+
 </script>
 
 <script>
     var tagValue; // Declare a variável tagValue aqui
-    
+
     function pegarValor(tag) {
         tagValue = tag; // Atribua o valor da tag à variável tagValue
-        console.log("Valor da Tag: " + tagValue);
     }
-    
-    $(document).ready(function() {
-        $("#ganhar").click(function(event) {
+
+    $(document).ready(function () {
+        $("#ganhar").click(function (event) {
             $("#loading-overlay").show();
             if (tagValue !== undefined) {
                 // Obtém os valores de editar_emt, editar_ema, editar_data_calib como você já fez
@@ -299,8 +561,8 @@
                 var editar_ema = $('#editar_ema').val();
                 var editar_data_calib = $('#editar_data_calib').val();
                 var editar_url = $('#editar_url').val();
-                
-                
+
+
                 if (editar_emt === "" || editar_ema === "" || editar_data_calib === "") {
                     // Exibe um alerta
                     alert("Por favor, preencha todos os campos.");
@@ -323,12 +585,12 @@
                     url: '/editar_tag',
                     method: 'POST',
                     data: data,
-                    success: function(response) {
+                    success: function (response) {
                         // Lide com a resposta do servidor, se necessário
                         console.log("Resposta do servidor:", response);
                         window.location.reload();
                     },
-                    error: function(error) {
+                    error: function (error) {
                         console.error("Erro na solicitação AJAX:", error);
                         $("#loading-overlay").hide();
                     }
@@ -341,47 +603,48 @@
 </script>
 
 <script>
-    $(document).ready(function() {
-    $(".enviar_calibracao").click(function(event) {
-        $("#loading-overlay").show();
-       
-        // Obtém os valores de editar_emt, editar_ema, editar_data_calib como você já fez
-        var editar_fornecedor = $('#editar_fornecedor').val();
-        var editar_data_envio = $('#editar_data_envio').val();
+    $(document).ready(function () {
+        $(".enviar_calibracao").click(function (event) {
+            $("#loading-overlay").show();
 
-        if (editar_fornecedor === "" || editar_data_envio === "") {
-            // Exibe um alerta
-            alert("Por favor, preencha todos os campos.");
+            // Obtém os valores de editar_emt, editar_ema, editar_data_calib como você já fez
+            var editar_fornecedor = $('#editar_fornecedor').val();
+            var editar_data_envio = $('#editar_data_envio').val();
 
-            // Oculta a sobreposição de carregamento e não envia a solicitação
-            $("#loading-overlay").hide();
+            if (editar_fornecedor === "" || editar_data_envio === "") {
+                // Exibe um alerta
+                alert("Por favor, preencha todos os campos.");
 
-            return;
-        } else {
-            // Se todos os campos estiverem preenchidos, continue com a solicitação AJAX
-            var data = {
-                tagValue:tagValue,
-                editar_fornecedor: editar_fornecedor,
-                editar_data_envio: editar_data_envio,
-            };
-        
-            // Faça a solicitação AJAX com os dados
-            $.ajax({
-                url: '/modal_data_envio',
-                method: 'POST',
-                data: data,
-                success: function(response) {
-                    // Lide com a resposta do servidor, se necessário
-                    console.log("Resposta do servidor:", response);
-                    window.location.reload();
-                },
-                error: function(error) {
-                    console.error("Erro na solicitação AJAX:", error);
-                    $("#loading-overlay").hide();
-                }
-            });
-        }
+                // Oculta a sobreposição de carregamento e não envia a solicitação
+                $("#loading-overlay").hide();
+
+                return;
+            } else {
+                // Se todos os campos estiverem preenchidos, continue com a solicitação AJAX
+                var data = {
+                    tagValue: tagValue,
+                    editar_fornecedor: editar_fornecedor,
+                    editar_data_envio: editar_data_envio,
+                };
+
+                // Faça a solicitação AJAX com os dados
+                $.ajax({
+                    url: '/modal_data_envio',
+                    method: 'POST',
+                    data: data,
+                    success: function (response) {
+                        // Lide com a resposta do servidor, se necessário
+                        console.log("Resposta do servidor:", response);
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error("Erro na solicitação AJAX:", error);
+                        $("#loading-overlay").hide();
+                    }
+                });
+            }
+        });
     });
-});
 </script>
+
 {% endblock %}

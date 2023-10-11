@@ -1,14 +1,4 @@
-// Adicione um ouvinte de eventos de clique aos botões com a classe 'btn-trigger-modal'
-const btnElements = document.querySelectorAll('.btn-trigger-modal');
-
-btnElements.forEach(function(btn) {
-    btn.addEventListener('click', function(event) {
-        const tag = event.currentTarget.getAttribute('data-tag');
-        showModal(tag);
-    });
-});
-
-function showModal(tag) {
+function showModalConfig(tag) {
     $("#loading-overlay").show();
         // Código para a Tabela 1
 
@@ -31,31 +21,31 @@ function showModal(tag) {
                 $('.modal-title').text(tag);
 
                 // Defina os valores dos campos de entrada no modal
-                $('#editar_nome').val(equip);
-                $('#editar_matricula').val(faixaNominal);
-                $('#editar_unidade').val(unidade);
-                $('#editar_localizacao').val(localizacao);
-                $('#editar_responsavel').val(responsavel);
-                $('#editar_controle').val(tipoControle);
-                $('#editar_periodicidade').val(periodicidade);
-                $('#editar_metodo').val(metodo);
-                $('#editar_ult_calibracao').val(ult_calibracao);
-                $('#editar_status').val(status);
+                $('#editar_equipamento_config').val(equip);
+                $('#editar_nominal_config').val(faixaNominal);
+                $('#editar_unidade_config').val(unidade);
+                $('#editar_localizacao_config').val(localizacao);
+                $('#editar_responsavel_config').val(responsavel);
+                $('#editar_controle_config').val(tipoControle);
+                $('#editar_periodicidade_config').val(periodicidade);
+                $('#editar_metodo_config').val(metodo);
+                $('#editar_ult_calibracao_config').val(ult_calibracao);
+                $('#editar_status_config').val(status);
     
                 // Exiba o modal
-                $('#modalGanhar').modal('show');
-                $('#modalGanhar').on('show.bs.modal', function () {
+                $('#config').modal('show');
+                $('#config').on('show.bs.modal', function () {
                     $('body').addClass('modal-open');
                 });
 
                 // Fechar o modal ao clicar no botão de fechar
-                $('#modalGanhar').on('click', '.close', function () {
-                    $('#modalGanhar').modal('hide');
+                $('#config').on('click', '.close', function () {
+                    $('#config').modal('hide');
                     $('body').removeClass('modal-open');
                 });
             },
             error: function (error) {
-                alert('Essa Ordem de Serviço não contém imagem ou vídeo');
+                alert('Erro. Atualize a página');
                 console.log(error);
             }
         });

@@ -1,6 +1,0 @@
-O que foi feito?
-- WHEN t3.data_envio NOTNULL AND t3.data_chegada ISNULL THEN 'Em Calibração'
-		WHEN t3.periodicidade_dias * 0.8 <= t3.dias_a_calibrar THEN 'A Calibrar'
-		ELSE 'Calibrado'
-Onde eu parei? 
-- Próximo passo é fazer a lógica dos Status com os Botões
