@@ -7,6 +7,8 @@ import requests
 from datetime import date
 import json
 import datetime
+import logging
+import traceback
 
 app = Flask(__name__)
 app.secret_key = "calibracao"
@@ -117,19 +119,19 @@ def inicio():
                 FROM ranked_tags
                 WHERE row_num = 1;"""
     
-    query_equip_unidade = ("""SELECT DISTINCT equipamento,faixa_nominal, unidade 
-                            FROM calibracao.tb_get_equipamentos
-                            ORDER BY equipamento;""")
+    # query_equip_unidade = ("""SELECT DISTINCT equipamento,faixa_nominal, unidade 
+    #                         FROM calibracao.tb_get_equipamentos
+    #                         ORDER BY equipamento;""")
     
-    cur.execute(query_equip_unidade)
-    equip_unidade = cur.fetchall()
-    df_data = pd.DataFrame(equip_unidade)
-    equipamentos = df_data[0].values.tolist()
-    equipamentos = list(set(filter(None, equipamentos)))
-    unidades = df_data[1].values.tolist()
-    unidades = list(set(filter(None, unidades)))
-    faixas_nominais = df_data[2].values.tolist()
-    faixas_nominais = list(set(filter(None, faixas_nominais)))
+    # cur.execute(query_equip_unidade)
+    # equip_unidade = cur.fetchall()
+    # df_data = pd.DataFrame(equip_unidade)
+    # equipamentos = df_data[0].values.tolist()
+    # equipamentos = list(set(filter(None, equipamentos)))
+    # unidades = df_data[1].values.tolist()
+    # unidades = list(set(filter(None, unidades)))
+    # faixas_nominais = df_data[2].values.tolist()
+    # faixas_nominais = list(set(filter(None, faixas_nominais)))
 
     cur.execute(query_historico)
     data_historico = cur.fetchall()
@@ -149,10 +151,8 @@ def inicio():
     custom_order = ["A Calibrar", "Em Calibração", "Calibrado"]
     df = df.sort_values(by=16, key=lambda x: x.map({value: i for i, value in enumerate(custom_order)}))
     list_calibracao = df.values.tolist()
-    print(df)
     
-    return render_template("home_calibracao.html", list_calibracao=list_calibracao, equipamentos=equipamentos,responsaveis=responsaveis,unidades=unidades, 
-                                                    faixas_nominais=faixas_nominais, list_tabela=list_tabela)
+    return render_template("home_calibracao.html", list_calibracao=list_calibracao,responsaveis=responsaveis, list_tabela=list_tabela)
 
 @app.route('/editar_modal_historico', methods=['POST','GET'])
 @login_required
@@ -193,6 +193,8 @@ def modal_historico():
 
     return render_template('home_calibracao.html')
 
+# Envio 
+
 @app.route('/modal_data_envio', methods = ['POST'])
 @login_required
 def envio():
@@ -213,6 +215,8 @@ def envio():
     conn.close()
 
     return render_template('home_calibracao.html')
+
+# Cadastro Equipamentos
 
 @app.route('/cadastro_equip', methods=['GET','POST'])
 @login_required
@@ -296,6 +300,8 @@ def cadastro():
     
     return render_template("cadastro.html",equipamentos=equipamentos,responsaveis=responsaveis,unidades=unidades)
 
+# Cadastro de Tags
+
 @app.route('/cadastrar_tag', methods=['POST'])
 @login_required
 def cadastrar_tag(): 
@@ -313,8 +319,6 @@ def cadastrar_tag():
     nominal = request.form.get('tag_nominal')
     localizacao = request.form.get('tag_localizacao')
     status = request.form.get('tag_status')
-
-    print(tag,equipamento,unidade,localizacao,responsavel,controle,data_tag,periodicidade,metodo,nominal,status)
     
     cur.execute(""" select MAX(CAST (RIGHT (tag,3) as int)) + 1 as id_tag 
                     from calibracao.tb_cadastro_tags
@@ -342,6 +346,8 @@ def cadastrar_tag():
 
     return redirect(url_for('cadastro'))
 
+# Botão Recebimento
+
 @app.route('/editar_tag',methods=['POST'])
 @login_required
 def editar_tag():
@@ -354,8 +360,6 @@ def editar_tag():
     editar_ema = request.form.get('editar_ema')
     editar_data_calib = request.form.get('editar_data_calib')
     editar_url = request.form.get('editar_url')
-
-    print(tagValue,editar_emt,editar_ema,editar_data_calib,editar_url)
 
     cur.execute("""INSERT INTO calibracao.tb_registro_tags (tag, ema, emt, data_calib,link_certificado) 
                 VALUES (%s,%s,%s,%s,%s)""",(tagValue,editar_ema,editar_emt,editar_data_calib,editar_url))
@@ -399,21 +403,23 @@ def relacao():
 @app.route('/atualizando_equip', methods=['POST','GET'])
 @login_required
 def atualizacao():
-
+ 
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     equip = request.form['tag_equipamento']
 
-    query = (f"""SELECT DISTINCT (unidade,faixa_nominal)
-                    FROM calibracao.tb_get_equipamentos
-                    WHERE equipamento = '{equip}';""")
+    query = f"""SELECT DISTINCT (unidade,faixa_nominal)
+                FROM calibracao.tb_get_equipamentos
+                WHERE equipamento = '{equip}';"""
 
     cur.execute(query)
     data = cur.fetchall()
     df_data = pd.DataFrame(data)
     unidades_no_equipamento = df_data[0].values.tolist()
-    # print(unidades_no_equipamento)
+
+    if conn is not None:
+        conn.close()
 
     lista_unidades = []
     lista_faixa_nominal = []
@@ -423,15 +429,83 @@ def atualizacao():
         elemento_0 = partes[0].strip('"')
         elemento_1 = partes[1].strip('"')
         
-        # Verifique se o elemento da posição 0 não é vazio e não está na lista
         if elemento_0 and elemento_0 not in lista_unidades:
             lista_unidades.append(elemento_0)
         
-        # Verifique se o elemento da posição 1 não é vazio e não está na lista
         if elemento_1 and elemento_1 not in lista_faixa_nominal:
-            lista_faixa_nominal.append(elemento_1)  
+            lista_faixa_nominal.append(elemento_1)
 
+    # Se as listas não estiverem vazias, retornar os dados normalmente
     return jsonify({'unidades': lista_unidades, 'faixa_nominal': lista_faixa_nominal})
+
+@app.route('/atualizando_equip_config', methods=['POST','GET'])
+@login_required
+def atualizacao_config():
+ 
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    if request.method == 'POST':
+        equip = request.form.get('equip')
+        unidade = request.form.get('unidade')
+        localizacao = request.form.get('localizacao')
+        responsavel = request.form.get('responsavel')
+        tipoControle = request.form.get('tipoControle')
+        periodicidade = request.form.get('periodicidade')
+        metodo = request.form.get('metodo')
+        faixaNominal = request.form.get('faixaNominal')
+        tag = request.form.get('tag')
+
+        print(equip,unidade,localizacao,tag,faixaNominal)
+
+        # cur.execute("""UPDATE calibracao.tb_cadastro_tags
+        #             SET equipamento = %s,
+        #                 unidade = %s,
+        #                 localizacao = %s,
+        #                 responsavel = %s,
+        #                 tipo_controle = %s,
+        #                 periodicidade = %s,
+        #                 metodo = %s,
+        #                 faixa_nominal = %s
+        #             WHERE tag = %s;""",(equip,unidade,localizacao,responsavel,tipoControle,periodicidade,metodo,faixaNominal,tag))
+        
+        conn.commit()
+        cur.close()
+
+        return render_template('home_calibracao.html')
+        
+    equip = request.form['equip']
+
+    query = f"""SELECT DISTINCT (equipamento,unidade,faixa_nominal)
+                FROM calibracao.tb_get_equipamentos
+                WHERE equipamento = '{equip}';"""
+
+    cur.execute(query)
+    data = cur.fetchall()
+    df_data = pd.DataFrame(data)
+    unidades_no_equipamento = df_data[0].values.tolist()
+
+    lista_equipamentos = []
+    lista_unidades = []
+    lista_faixa_nominal = []
+
+    for tupla in unidades_no_equipamento:
+        partes = tupla.strip('()').split(',')
+        elemento_0 = partes[0].strip('"')
+        elemento_1 = partes[1].strip('"')
+        elemento_2 = partes[2].strip('"')
+        
+        if elemento_0 and elemento_0 not in lista_equipamentos:
+            lista_equipamentos.append(elemento_0)
+        
+        if elemento_1 and elemento_1 not in lista_unidades:
+            lista_unidades.append(elemento_1)
+
+        if elemento_2 and elemento_2 not in lista_faixa_nominal:
+            lista_faixa_nominal.append(elemento_2)
+
+    # Se as listas não estiverem vazias, retornar os dados normalmente
+    return jsonify({'equipamentos':lista_equipamentos,'unidades': lista_unidades, 'faixa_nominal': lista_faixa_nominal})
 
 def tabela_inicial():
 

@@ -24,9 +24,6 @@ function showModal2(event) {
             });
             $('#modalGanhar2').modal('show');
 
-            setTimeout(function() {
-                modal.style.display = 'block';
-            }, 1000);
             // Fechar o modal ao clicar no botão de fechar
             $('#modalGanhar2').on('click', '.close', function () {
                 $('#modalGanhar2').modal('hide');

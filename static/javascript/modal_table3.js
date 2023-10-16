@@ -14,9 +14,6 @@ function showModalEnvio(Tag) {
                     $('body').addClass('modal-open');
                 });
 
-                setTimeout(function () {
-                    modal.style.display = 'block';
-                }, 1000);
                 // Fechar o modal ao clicar no botão de fechar
                 $('#modalGanhar3').on('click', '.close', function () {
                     $('#modalGanhar3').modal('hide');
