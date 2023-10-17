@@ -86,20 +86,22 @@ def inicio():
 
         return jsonify(lista_historico)
 
-    s = (""" SELECT *,
-                CASE 
-                    WHEN t3.data_envio IS NOT NULL AND t3.data_chegada IS NULL THEN 'Em Calibração'
-                    WHEN t3.periodicidade_dias * 0.8 <= t3.dias_apos_calibracao THEN 'A Calibrar'
-                    ELSE 'Calibrado'
-                END as novo_status,
-                CAST (t3.data_calibracao + (t3.periodicidade || ' months')::interval AS date) as proxima_data_calibracao
-            FROM (
-                SELECT envio.*, cadastro.data_envio, cadastro.data_chegada, envio.periodicidade * 30 as periodicidade_dias,
-                    CURRENT_DATE - DATE(envio.data_calibracao) as dias_apos_calibracao
-                FROM calibracao.tb_cadastro_tags  AS envio
-                LEFT JOIN calibracao.tb_envio_tags_calibracao AS cadastro
-                ON envio.tag = cadastro.tag AND envio.tag = cadastro.tag
-                ) AS t3; """)
+    s = (""" SELECT DISTINCT ON (t3.tag)
+            t3.*,
+            CASE 
+                WHEN t3.data_envio IS NOT NULL AND t3.data_chegada IS NULL THEN 'Em Calibração'
+                WHEN t3.periodicidade_dias * 0.8 <= t3.dias_apos_calibracao THEN 'A Calibrar'
+                ELSE 'Calibrado'
+            END as novo_status,
+            CAST (t3.data_calibracao + (t3.periodicidade || ' months')::interval AS date) as proxima_data_calibracao
+        FROM (
+            SELECT envio.*, cadastro.data_envio, cadastro.data_chegada, envio.periodicidade * 30 as periodicidade_dias,
+                CURRENT_DATE - DATE(envio.data_calibracao) as dias_apos_calibracao
+            FROM calibracao.tb_cadastro_tags  AS envio
+            LEFT JOIN calibracao.tb_envio_tags_calibracao AS cadastro
+            ON envio.tag = cadastro.tag AND envio.tag = cadastro.tag
+            ORDER BY envio.tag, cadastro.data_envio DESC
+            ) AS t3; """)
     
     query = (""" SELECT *
                 FROM tb_matriculas;""")
@@ -392,13 +394,22 @@ def relacao():
                 END as contagem_dias
             FROM calibracao.tb_envio_tags_calibracao;""")
     
+    query_equipamentos = (""" SELECT *
+                            FROM calibracao.tb_get_equipamentos """)
+    
+    cur.execute(query_equipamentos)
+    data_equipamentos = cur.fetchall()
+    tabela_equipamentos = pd.DataFrame(data_equipamentos)
+
+    list_tabela_equipamentos = tabela_equipamentos.values.tolist()
+    
     cur.execute(query)
     data = cur.fetchall()
     tabela = pd.DataFrame(data)
 
     list_tags_enviadas = tabela.values.tolist()
 
-    return render_template('relacao.html',list_tags_enviadas=list_tags_enviadas)
+    return render_template('relacao.html',list_tags_enviadas=list_tags_enviadas,list_tabela_equipamentos=list_tabela_equipamentos)
 
 @app.route('/atualizando_equip', methods=['POST','GET'])
 @login_required
@@ -454,20 +465,20 @@ def atualizacao_config():
         periodicidade = request.form.get('periodicidade')
         metodo = request.form.get('metodo')
         faixaNominal = request.form.get('faixaNominal')
-        tag = request.form.get('tag')
+        status_equipamento = request.form.get('status_equipamento')
+        tagValue = request.form.get('tagValue')
 
-        print(equip,unidade,localizacao,tag,faixaNominal)
-
-        # cur.execute("""UPDATE calibracao.tb_cadastro_tags
-        #             SET equipamento = %s,
-        #                 unidade = %s,
-        #                 localizacao = %s,
-        #                 responsavel = %s,
-        #                 tipo_controle = %s,
-        #                 periodicidade = %s,
-        #                 metodo = %s,
-        #                 faixa_nominal = %s
-        #             WHERE tag = %s;""",(equip,unidade,localizacao,responsavel,tipoControle,periodicidade,metodo,faixaNominal,tag))
+        cur.execute("""UPDATE calibracao.tb_cadastro_tags
+                    SET equipamento = %s,
+                        unidade = %s,
+                        localizacao = %s,
+                        responsavel = %s,
+                        tipo_controle = %s,
+                        periodicidade = %s,
+                        metodo = %s,
+                        faixa_nominal = %s,
+                        status_equipamento = %s
+                    WHERE tag = %s;""",(equip,unidade,localizacao,responsavel,tipoControle,periodicidade,metodo,faixaNominal,status_equipamento,tagValue))
         
         conn.commit()
         cur.close()

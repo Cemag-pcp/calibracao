@@ -28,13 +28,13 @@
             <table class="responsive-table ">
                 <thead>
                     <tr>
-                        <th class="cabecalho">Tag - Equip.</th>
-                        <th class="cabecalho">Equip</th>
+                        <th class="cabecalho">Tag Equipamento</th>
+                        <th class="cabecalho">Equipamento</th>
                         <th class="cabecalho">Responsavel</th>
-                        <th class="cabecalho">Ult.Calib</th>
+                        <th class="cabecalho">Ultima Calibracao</th>
                         <th class="cabecalho">Status</th>
-                        <th class="cabecalho">Prox.Calib</th>
-                        <th class="cabecalho">Recebimento</th>
+                        <th class="cabecalho">Proxima Calibracao</th>
+                        <th class="cabecalho">Receb.</th>
                         <th class="cabecalho">Envio</th>
                         <th class="cabecalho">Config.</th>
                     </tr>
@@ -43,8 +43,7 @@
                     {% for row in list_calibracao %}
                     <tr onclick="justTag('{{ row[0] }}')">
                         {% if row[11] != "Uso" %}
-                        <td data-label="Tag">{{ row[0] }} <i class="fa-solid fa-circle-xmark"
-                                style="color: red; font-size: 15px;"></i></td>
+                        <td data-label="Tag">{{ row[0] }}</td>
                         {% else %}
                         <td data-label="Tag">{{ row[0] }}</td>
                         {% endif %}
@@ -60,6 +59,9 @@
                         {% if row[16] == 'Em Calibração' %}
                         <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle" style="color: yellow;"></i>
                         </td>
+                        {% elif row[11] == 'Desuso' %}
+                        <td data-label="Status"><i class="fa-solid fa-circle-xmark"
+                            style="color: red; font-size: 18px;"></i></td>
                         {% elif row[16] == 'Calibrado' %}
                         <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle"
                                 style="color: rgb(117, 252, 139);"></i></td>
@@ -67,17 +69,18 @@
                         <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle"
                                 style="color: rgb(255, 79, 79);"></i></td>
                         {% endif %}
+                        <td data-label="Uso/Desuso" style="display: none;">{{row[11]}}</td>
                         {% if row[14] - row[15] > 0 and row[16] != 'Em Calibração' %}
-                        <td data-label="Prox.Calib">{{row[17]}} Faltam {{row[14] - row[15]}} dias</td>
+                        <td data-label="Prox.Calib">Faltam {{row[14] - row[15]}} dias ({{row[17]}})</td>
                         {% elif row[16] == 'Em Calibração' %}
-                        <td data-label="Prox.Calib">{{row[17]}} Item Enviado</td>
+                        <td data-label="Prox.Calib">Item Enviado ({{row[17]}})</td>
                         {% else %}
-                        <td data-label="Prox.Calib">{{row[17]}} Está atrasado: {{(-row[14]) + row[15]}} dias</td>
+                        <td data-label="Prox.Calib">Está atrasado: {{(-row[14]) + row[15]}} dias ({{row[17]}})</td>
                         {% endif %}
                         {% if row[16] == 'Em Calibração' %}
                         <td data-label="Recebimento">
                             <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}"
-                                onclick="pegarValor(this)">Recebimento</button>
+                                onclick="pegarValor(this)"><i class="fa-solid fa-people-carry-box"></i></button>
                         </td>
                         <td data-label="Envio">
                             <button class="btn-trigger-envio botão_modal_tag" onclick="showModalEnvio('{{ row[0] }}')"
@@ -86,7 +89,8 @@
                         {% else %}
                         <td data-label="Recebimento">
                             <button class="btn-trigger-modal botão_modal_tag" data-tag="{{ row[0] }}"
-                                readonly="readonly" onclick="pegarValor(this)" disabled>Recebimento</button>
+                                readonly="readonly" onclick="pegarValor(this)" disabled><i
+                                    class="fa-solid fa-people-carry-box"></i></button>
                         </td>
                         <td data-label="Envio">
                             <button class="btn-trigger-envio botão_modal_tag"
@@ -96,7 +100,7 @@
                         {% endif %}
                         <td data-label="Configurações">
                             <button class="btn-trigger-config botão_modal_tag"
-                                onclick="showModalConfig(this);"><i
+                                onclick=" showModalConfig(this); valoresNominalUnidade('{{ row[1] }}')"><i
                                     class="fa-solid fa-gear"></i></button>
                         </td>
                     </tr>
@@ -106,21 +110,21 @@
         </section>
     </div>
     <div class="table table-2" style="margin: 40px; margin-left: 20px;">
-        <section class="table__header" style="justify-content: center;">
+        <section class="table__header">
             <h1>Histórico de Calibração</h1>
-            <!-- <div class="input-group2">
-                <input type="search" placeholder="Filtrar..." disabled>
+            <div class="input-group2">
+                <input type="search" placeholder="Filtrar...">
                 <i class="fa-solid fa-magnifying-glass"></i>
-            </div> -->
+            </div>
         </section>
-        <div class="select-group">
+        <!-- <div class="select-group">
             <select name="ordemproducao" id="ordemproducao" multiple>
                 {% for lista in list_tabela %}
                 <option value="{{ lista[0] }}">{{ lista[0] }}</option>
                 {% endfor %}
             </select>
             <button id="filtrarOrdem" type="submit" class="btn btn-light" style=" margin-left: 10px;">Filtrar</button>
-        </div>
+        </div> -->
         <section class="table__body">
             <table class="responsive-table">
                 <thead>
@@ -377,8 +381,11 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="editar_status_equipamento">Status Equipamento (Uso/Desuso)</label>
-                                    <input type="text" class="form-control" style="height: 38px;"
-                                        name="editar_status_equipamento_config" id="editar_status_equipamento_config" readonly="readonly">
+                                    <select class="form-control" style="height: 38px;"
+                                        name="editar_status_equipamento_config" id="editar_status_equipamento_config">
+                                        <option value="Uso">Uso</option>
+                                        <option value="Desuso">Desuso</option>
+                                    </select>
                                 </div>
                             </div>
                             <button class="config_calibracao">Enviar</button>
@@ -405,7 +412,6 @@
                             <div id="historico-table">
                                 <!-- Os valores da lista_historico serão inseridos aqui -->
                             </div>
-
                         </section>
                     </div>
                 </div>
@@ -425,53 +431,6 @@
         }
     })
 </script>
-
-<script>
-    $(document).ready(function () {
-        $(".config_calibracao").click(function () {
-        $("#loading-overlay").show();
-
-        var tag = justTag(tag);
-        var equip = $('#editar_equipamento_config').val();
-        var faixaNominal = $('#editar_nominal_config').val();
-        var unidade = $('#editar_unidade_config').val();
-        var localizacao = $('#editar_localizacao_config').val();
-        var responsavel =  $('#editar_responsavel_config').val();
-        var tipoControle = $('#editar_controle_config').val();
-        var periodicidade = $('#editar_periodicidade_config').val();
-        var metodo =  $('#editar_metodo_config').val();
-        var status_equipamento = $('#editar_status_equipamento_config').val();
-
-        console.log("Aqui é " + tag)
-        console.log("Aqui é equip " + equip)
-
-        $.ajax({
-            url: '/atualizando_equip_config',
-            method: 'POST',
-            data: {
-                tag:tag,
-                equip: equip,
-                unidade:unidade,
-                localizacao:localizacao,
-                responsavel:responsavel,
-                tipoControle:tipoControle,
-                periodicidade:periodicidade,
-                metodo:metodo,
-                faixaNominal:faixaNominal,
-                status_equipamento:status_equipamento,
-            },
-            success: function (resposta) {
-                window.location.reload();
-            },
-                error: function (error) {
-                    console.log(error);
-                    $("#loading-overlay").hide();
-                }
-        });
-    });
-});
-</script>
-
 <script>
     // Seleciona o botão pelo seu ID
     var toggleButton = document.getElementById("toggleButton");
@@ -557,7 +516,6 @@
 
 <script>
     var tagValue; // Declare a variável tagValue aqui
-
 
     function justTag(tag) {
         tagValue = tag; // Atribua o valor da tag à variável tagValue
@@ -680,6 +638,103 @@
             }
         });
     });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(".config_calibracao").click(function () {
+            $("#loading-overlay").show();
+
+            var equip = $('#editar_equipamento_config').val();
+            var faixaNominal = $('#editar_nominal_config').val();
+            var unidade = $('#editar_unidade_config').val();
+            var localizacao = $('#editar_localizacao_config').val();
+            var responsavel = $('#editar_responsavel_config').val();
+            var tipoControle = $('#editar_controle_config').val();
+            var periodicidade = $('#editar_periodicidade_config').val();
+            var metodo = $('#editar_metodo_config').val();
+            var status_equipamento = $('#editar_status_equipamento_config').val();
+
+            $.ajax({
+                url: '/atualizando_equip_config',
+                method: 'POST',
+                data: {
+                    tagValue: tagValue,
+                    equip: equip,
+                    unidade: unidade,
+                    localizacao: localizacao,
+                    responsavel: responsavel,
+                    tipoControle: tipoControle,
+                    periodicidade: periodicidade,
+                    metodo: metodo,
+                    faixaNominal: faixaNominal,
+                    status_equipamento: status_equipamento,
+                },
+                success: function (response) {
+                    window.location.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                    $("#loading-overlay").hide();
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function valoresNominalUnidade(tag_equipamento) {
+        $("#loading-overlay").show();
+
+        $('#editar_unidade_config').empty();
+        $('#editar_nominal_config').empty();
+
+        $('#tag_unidade').append($('<option selected disabled hidden>', {
+            value: '',
+            text: 'Selecionar'
+        }));
+        $('#tag_nominal').append($('<option selected disabled hidden>', {
+            value: '',
+            text: 'Selecionar'
+        }));
+
+        $.ajax({
+            url: '/atualizando_equip',
+            method: 'POST',
+            data: {
+                tag_equipamento: tag_equipamento
+            },
+            success: function (response) {
+                var unidades = response.unidades;
+                var faixa_nominal = response.faixa_nominal;
+
+                // Atualize o campo de seleção de Unidade
+                var selectUnidade = $('#editar_unidade_config');
+                $.each(unidades, function (index, unidade) {
+                    selectUnidade.append($('<option>', {
+                        value: unidade,
+                        text: unidade
+                    }));
+                });
+
+                // Atualize o campo de seleção de Faixa Nominal
+                var selectFaixaNominal = $('#editar_nominal_config');
+                $.each(faixa_nominal, function (index, fn) {
+                    selectFaixaNominal.append($('<option>', {
+                        value: fn,
+                        text: fn
+                    }));
+                });
+
+                $("#loading-overlay").hide(); // Oculta o overlay após atualizar os dados
+            },
+            error: function (error) {
+                console.log(error);
+                $("#loading-overlay").hide(); // Oculta o overlay após atualizar os dados
+            }
+        });
+    }
+
 </script>
 
 {% endblock %}

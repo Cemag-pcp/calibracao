@@ -15,146 +15,28 @@
                 <thead>
                     <tr>
                         <th class="cabecalho">Equipamento</th>
-                        <th class="cabecalho">Frabricante</th>
-                        <th class="cabecalho">Grandeza</th>
-                        <th class="cabecalho">Unidade</th>
                         <th class="cabecalho">Faixa Nominal</th>
+                        <th class="cabecalho">Unidade</th>
+                        <th class="cabecalho">Grandeza</th>
+                        <th class="cabecalho">Faixa de Calibracão</th>
+                        <th class="cabecalho">Frabricante</th>
                         <th class="cabecalho">Preço (R$)</th>
-                        <th class="cabecalho">Quantidade</th>
                         <th class="cabecalho">Valor Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for row in list_tabela_equipamentos %}
                     <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
+                        <td data-label="Equip">{{row[1]}}</td>
+                        <td data-label="Faixa Nominal">{{row[2]}}</td>
+                        <td data-label="Unidade">{{row[3]}}</td>
+                        <td data-label="Grandeza">{{row[4]}}</td>
+                        <td data-label="Faixa de Calibração">{{row[5]}}</td>
+                        <td data-label="Fabricante">{{row[6]}}</td>
+                        <td data-label="Preço">R$ {{row[7]}}</td>
+                        <td data-label="Valor Total">R$ {{row[7] * 10}} </td>
                     </tr>
-                    <tr class="modal-trigger"> 
-                        <td data-label="Tag">Manômetro</td>
-                        <td data-label="Equip">Wika</td>
-                        <td data-label="Setor">Pressão</td>
-                        <td data-label="Ult.Calib">bar psi</td>
-                        <td data-label="Periodicidade">0-10/0-145</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-5</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-3</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-8</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
-                    <tr class="modal-trigger">
-                        <td data-label="Tag">Trena</td>
-                        <td data-label="Equip">Starret</td>
-                        <td data-label="Setor">Dimensional</td>
-                        <td data-label="Ult.Calib">m</td>
-                        <td data-label="Periodicidade">0-10</td>
-                        <td data-label="Preço">R$ 15,00</td>
-                        <td data-label="Quantidade">25</td>
-                        <td data-label="Valor Total">R$ 375,00</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </section>
