@@ -73,7 +73,7 @@ function showModal2(event) {
 
                 const downloadLink = $('<td data-label="Link Certificado"></td>');
                 if (item[2]) {
-                    const link = $(`<a href="${item[2]}"><i class="fa-solid fa-download" style="color: black;"></i></a>`);
+                    const link = $(`<a target="_blank" href="${item[2]}"><i class="fa-solid fa-download" style="color: black;"></i></a>`);
                     downloadLink.append(link);
                 } else {
                     const redIcon = $('<i class="fa-solid fa-download" style="color: red;"></i>');

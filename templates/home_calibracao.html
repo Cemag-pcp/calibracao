@@ -73,7 +73,7 @@
                         {% if row[14] - row[15] > 0 and row[16] != 'Em Calibração' %}
                         <td data-label="Prox.Calib">Faltam {{row[14] - row[15]}} dias ({{row[17]}})</td>
                         {% elif row[16] == 'Em Calibração' %}
-                        <td data-label="Prox.Calib">Item Enviado ({{row[17]}})</td>
+                        <td data-label="Prox.Calib">Item Enviado</td>
                         {% else %}
                         <td data-label="Prox.Calib">Está atrasado: {{(-row[14]) + row[15]}} dias ({{row[17]}})</td>
                         {% endif %}

@@ -1,7 +1,0 @@
-O que foi feito?
-- Está enviando as informações para o back end
-- Coloquei os itens do get_equipamentos na tabela de relações
-O que fazer? 
-- Testes
-- **Lembrar de fazer um documento para todas as funções, rotas e tabelas do banco de dados
-- ** Apagar os dados do banco de dados (menos get_equipamentos)

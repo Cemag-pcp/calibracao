@@ -150,8 +150,11 @@ def inicio():
     cur.execute(s)
     data = cur.fetchall()
     df = pd.DataFrame(data)
-    custom_order = ["A Calibrar", "Em Calibração", "Calibrado"]
-    df = df.sort_values(by=16, key=lambda x: x.map({value: i for i, value in enumerate(custom_order)}))
+    try: 
+        custom_order = ["A Calibrar", "Em Calibração", "Calibrado"]
+        df = df.sort_values(by=16, key=lambda x: x.map({value: i for i, value in enumerate(custom_order)}))
+    except:
+        pass
     list_calibracao = df.values.tolist()
     
     return render_template("home_calibracao.html", list_calibracao=list_calibracao,responsaveis=responsaveis, list_tabela=list_tabela)
