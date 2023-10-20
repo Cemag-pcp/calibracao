@@ -64,7 +64,7 @@ s = (""" SELECT *,
 			WHEN novo_status != 'A Calibrar' THEN 'Email Não Enviado'
 			WHEN periodicidade_dias * 0.8 = dias_apos_calibracao THEN 'Email Enviado 1'
 			WHEN periodicidade_dias = dias_apos_calibracao THEN 'Email Enviado 2'
-			WHEN periodicidade_dias = dias_apos_calibracao + 10 THEN 'Email Enviado 3'
+			WHEN periodicidade_dias + 10 = dias_apos_calibracao THEN 'Email Enviado 3'
 			ELSE ''
 		END as novo_status
  FROM (
