@@ -42,11 +42,7 @@
                 <tbody>
                     {% for row in list_calibracao %}
                     <tr onclick="justTag('{{ row[0] }}')">
-                        {% if row[11] != "Uso" %}
                         <td data-label="Tag">{{ row[0] }}</td>
-                        {% else %}
-                        <td data-label="Tag">{{ row[0] }}</td>
-                        {% endif %}
                         <td data-label="Equip">{{row[1]}}</td>
                         <td data-label="Unidade" style="display: none;">{{row[2]}}</td>
                         <td data-label="Localizacao" style="display: none;">{{row[3]}}</td>
@@ -59,7 +55,7 @@
                         {% if row[16] == 'Em Calibração' %}
                         <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle" style="color: yellow;"></i>
                         </td>
-                        {% elif row[11] == 'Desuso' %}
+                        {% elif row[10] == 'Desuso' %}
                         <td data-label="Status"><i class="fa-solid fa-circle-xmark"
                             style="color: red; font-size: 18px;"></i></td>
                         {% elif row[16] == 'Calibrado' %}
@@ -69,7 +65,7 @@
                         <td data-label="Status">{{row[16]}} <i class="fa-solid fa-circle"
                                 style="color: rgb(255, 79, 79);"></i></td>
                         {% endif %}
-                        <td data-label="Uso/Desuso" style="display: none;">{{row[11]}}</td>
+                        <td data-label="Uso/Desuso" style="display: none;">{{row[10]}}</td>
                         {% if row[14] - row[15] > 0 and row[16] != 'Em Calibração' %}
                         <td data-label="Prox.Calib">Faltam {{row[14] - row[15]}} dias ({{row[17]}})</td>
                         {% elif row[16] == 'Em Calibração' %}

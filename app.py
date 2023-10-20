@@ -9,6 +9,9 @@ import json
 import datetime
 import logging
 import traceback
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.secret_key = "calibracao"
@@ -120,20 +123,6 @@ def inicio():
                 SELECT tag, equipamento, localizacao,data_calib
                 FROM ranked_tags
                 WHERE row_num = 1;"""
-    
-    # query_equip_unidade = ("""SELECT DISTINCT equipamento,faixa_nominal, unidade 
-    #                         FROM calibracao.tb_get_equipamentos
-    #                         ORDER BY equipamento;""")
-    
-    # cur.execute(query_equip_unidade)
-    # equip_unidade = cur.fetchall()
-    # df_data = pd.DataFrame(equip_unidade)
-    # equipamentos = df_data[0].values.tolist()
-    # equipamentos = list(set(filter(None, equipamentos)))
-    # unidades = df_data[1].values.tolist()
-    # unidades = list(set(filter(None, unidades)))
-    # faixas_nominais = df_data[2].values.tolist()
-    # faixas_nominais = list(set(filter(None, faixas_nominais)))
 
     cur.execute(query_historico)
     data_historico = cur.fetchall()
@@ -155,6 +144,7 @@ def inicio():
         df = df.sort_values(by=16, key=lambda x: x.map({value: i for i, value in enumerate(custom_order)}))
     except:
         pass
+
     list_calibracao = df.values.tolist()
     
     return render_template("home_calibracao.html", list_calibracao=list_calibracao,responsaveis=responsaveis, list_tabela=list_tabela)
@@ -323,7 +313,6 @@ def cadastrar_tag():
     periodicidade = request.form.get('tag_periodicidade')
     nominal = request.form.get('tag_nominal')
     localizacao = request.form.get('tag_localizacao')
-    status = request.form.get('tag_status')
     
     cur.execute(""" select MAX(CAST (RIGHT (tag,3) as int)) + 1 as id_tag 
                     from calibracao.tb_cadastro_tags
@@ -342,9 +331,9 @@ def cadastrar_tag():
         nova_tag = tag + '-00' + str(lista_tags[0][0])
 
     cur.execute("""INSERT INTO calibracao.tb_cadastro_tags (tag,equipamento,unidade,localizacao,
-                responsavel,tipo_controle,data_calibracao,periodicidade,metodo,faixa_nominal,status) 
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(nova_tag,equipamento,unidade,localizacao,responsavel,controle,
-                                                           data_tag,periodicidade,metodo,nominal,status))
+                responsavel,tipo_controle,data_calibracao,periodicidade,metodo,faixa_nominal) 
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",(nova_tag,equipamento,unidade,localizacao,responsavel,controle,
+                                                           data_tag,periodicidade,metodo,nominal))
     conn.commit()
 
     conn.close()
