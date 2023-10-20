@@ -36,7 +36,7 @@ def enviar_email_mes(df):
     mensagem = MIMEMultipart()
     mensagem['From'] = 'sistema@cemag.com.br'
     mensagem['To'] = email_qualidade
-    mensagem['Subject'] = 'Sistema de Calibração ' + data_formatada
+    mensagem['Subject'] = 'Sistema de Calibração - {}'.format(data_formatada) 
 
     mensagem.attach(MIMEText(corpo_email, 'html'))
 
@@ -97,7 +97,10 @@ df['Prazo para calibrar'] = df.apply(calcular_nova_coluna, axis=1)
 df = df[[0,1,'Prazo para calibrar']]
 df.rename(columns={0:'Tag',1:'Equipamento'},inplace=True)
 
-enviar_email_mes(df)
+if not df.empty:
+    enviar_email_mes(df)
+else:
+    print("Email não enviado pois a lista está vazia, execute novamente amanhã")
 
 
 
