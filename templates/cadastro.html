@@ -85,7 +85,7 @@
             <div class="form-row">
                 <div class="form-group" style="margin-top: 28px;">
                   <label for="tag_equipamento">Equipamento</label>
-                  <select class="form-control" style="height: 38px;" name="tag_equipamento" id="tag_equipamento" onchange="atualizarTag(); updateTag(); copySelectedToClipboard();">
+                  <select class="form-control" style="height: 38px;" name="tag_equipamento" id="tag_equipamento" onchange="atualizarTag(); updateTag(); copySelectedToClipboard();" required>
                     <option value="" selected disabled hidden></option>  
                     {% for equipamento in equipamentos %}
                     <option value="{{equipamento}}">{{equipamento}}</option>
@@ -95,19 +95,19 @@
               
                 <div class="form-group" style="margin-top: 28px;">
                   <label for="tag_nominal">Faixa Nominal</label>
-                  <select class="form-control" style="height: 38px;" name="tag_nominal" id="tag_nominal">
+                  <select class="form-control" style="height: 38px;" name="tag_nominal" id="tag_nominal" required>
                   </select>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group" style="margin-top: 28px;">
                   <label for="tag_unidade">Unidade</label>
-                  <select class="form-control" style="height: 38px;" name="tag_unidade" id="tag_unidade">
+                  <select class="form-control" style="height: 38px;" name="tag_unidade" id="tag_unidade" required>
                   </select>
               </div>
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_localizacao">Localização</label>
-                <select class="form-control" style="height: 38px;" name="tag_localizacao" id="tag_localizacao" onchange="updateTag()">
+                <select class="form-control" style="height: 38px;" name="tag_localizacao" id="tag_localizacao" onchange="updateTag()" required>
                     <option value="" selected disabled hidden></option>  
                     <option>Administrativo</option>
                     <option>Estamparia</option>
@@ -129,7 +129,7 @@
             <div class="form-row">
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_responsavel">Responsável</label>
-                <select class="form-control" style="height: 38px;" name="tag_responsavel" id="tag_responsavel">
+                <select class="form-control" style="height: 38px;" name="tag_responsavel" id="tag_responsavel" required>
                     <option value="" selected disabled hidden></option>  
                     {% for responsavel in responsaveis %}
                     <option value="{{responsavel}}" >{{responsavel}}</option>
@@ -138,7 +138,7 @@
               </div>
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_controle">Tipo de Controle</label>
-                <select class="form-control" style="height: 38px;" name="tag_controle" id="tag_controle">
+                <select class="form-control" style="height: 38px;" name="tag_controle" id="tag_controle" required>
                   <option value="" selected disabled hidden></option>  
                   <option>Calibração</option>
                   <option>Verificação</option>
@@ -148,17 +148,17 @@
             <div class="form-row">
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_data">Data da Última Calibração</label>
-                <input type="date" class="form-control" style="height: 38px;" name="tag_data" id="tag_data">
+                <input type="date" class="form-control" style="height: 38px;" name="tag_data" id="tag_data" required>
               </div>
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_periodicidade">Periodicidade</label>
-                <input type="number" class="form-control" style="height: 38px;" name="tag_periodicidade" id="tag_periodicidade">
+                <input type="number" class="form-control" style="height: 38px;" name="tag_periodicidade" id="tag_periodicidade" required>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group" style="margin-top: 28px;">
                 <label for="tag_metodo">Método</label>
-                <select class="form-control" style="height: 38px;" name="tag_metodo" id="tag_metodo">
+                <select class="form-control" style="height: 38px;" name="tag_metodo" id="tag_metodo" required>
                   <option value="" selected disabled hidden></option>  
                   <option>Externo</option>
                   <option>Interno</option>

@@ -50,11 +50,11 @@ def enviar_email_mes(df):
 
 def calcular_nova_coluna(row):
     if row[18] == 'Email Enviado 1':
-        return f'Está atrasada: {row[15] - row[14]} dias'
+        return f'Faltam {abs(row[15] - row[14])} dias'
     elif row[18] == 'Email Enviado 2':
         return 'Hoje é o dia programado para a calibração'
     elif row[18] == 'Email Enviado 3':
-        return f'Faltam: 10 dias'
+        return f'Está atrasada 10 dias'
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
