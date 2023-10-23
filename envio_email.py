@@ -20,7 +20,7 @@ DB_PASS = "15512332"
 
 def enviar_email_mes(df):
 
-    email_qualidade = "saulmarinho@edu.unifor.br"
+    email_qualidade = "estefane@cemag.com.br"
     smtp_host = 'smtp.gmail.com'
     smtp_port = 587
     smtp_user = 'sistema@cemag.com.br'
